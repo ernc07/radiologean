@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "radiologean",
+			"path": "."
+		},
+		{
+			"name": "birads_app", 
+			"path": "../Users/Erdinc Hakan Inan/birads_app"
+		}
+	],
+	"settings": {
+		"python.defaultInterpreterPath": "python",
+		"files.exclude": {
+			"**/node_modules": true,
+			"**/__pycache__": true,
+			"**/build": true,
+			"**/.next": true
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-python.python",
+			"bradlc.vscode-tailwindcss",
+			"esbenp.prettier-vscode"
+		]
+	}
+}
