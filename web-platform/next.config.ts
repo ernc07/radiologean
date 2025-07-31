@@ -6,14 +6,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
-  // Performance optimizations
+  // Safe performance optimizations only
   compress: true,
   poweredByHeader: false,
-  generateEtags: false,
-  // Experimental features for performance  
-  experimental: {
-    optimizeCss: true,
-  }
+  generateEtags: false
 };
 
 export default nextConfig;
