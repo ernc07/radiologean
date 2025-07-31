@@ -184,14 +184,12 @@ export default function AdrenalPage() {
           >
             ← Ana Sayfaya Dön
           </Link>
-          <a 
-            href="http://localhost:8501"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+          <Link 
+            href="/pirads"
+            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
           >
-            BI-RADS&apos;ı Dene →
-          </a>
+            PI-RADS&apos;ı İncele →
+          </Link>
         </div>
 
         {/* Footer */}

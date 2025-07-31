@@ -59,11 +59,14 @@ streamlit run birads_app.py
 
 ### ✅ Tamamlanan
 - [x] Akademik ana sayfa tasarımı
-- [x] BI-RADS Python app entegrasyonu
+- [x] BI-RADS Python app entegrasyonu (iframe ile)
+- [x] BI-RADS interaktif skorlama sistemi
 - [x] PI-RADS under construction sayfası
 - [x] Adrenal under construction sayfası
 - [x] Responsive tasarım
 - [x] Dark mode desteği
+- [x] GitHub repository entegrasyonu
+- [x] Render deployment (radiologean.com)
 
 ### 🔄 Planlanan
 - [ ] PI-RADS interaktif skorlama
