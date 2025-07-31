@@ -1,3 +1,2 @@
 #!/bin/bash
-cd modules/birads-app
-streamlit run birads_app.py --server.port=$PORT --server.address=0.0.0.0
+streamlit run modules/birads-app/birads_app.py --server.port=$PORT --server.address=0.0.0.0 --server.headless=true
