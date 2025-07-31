@@ -2,284 +2,415 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface BiRadsResult {
   category: string;
   description: string;
   recommendation: string;
   risk: string;
+  cssClass: string;
+}
+
+interface FormData {
+  examComplete: string;
+  findingType: string[];
+  shape?: string;
+  margin?: string;
+  stable2yr?: boolean;
+  kalsifikasyonType?: string;
+  distribution?: string;
+  archDistortionType?: string;
+  asymmetryType?: string;
 }
 
 export default function BiRadsPage() {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    examComplete: '',
+    findingType: []
+  });
   const [result, setResult] = useState<BiRadsResult | null>(null);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-        setResult(null);
+  const calculateBiRads = (): BiRadsResult => {
+    // BI-RADS 0 - Yetersiz tetkik
+    if (formData.examComplete === 'no') {
+      return {
+        category: 'BI-RADS 0',
+        description: 'Tetkik yeterli değil. Ek görüntüleme gereklidir.',
+        recommendation: 'Ek tetkik yapılmadan kesin değerlendirme yapılamaz.',
+        risk: 'Değerlendirme tamamlanamadı',
+        cssClass: 'birads-0'
       };
-      reader.readAsDataURL(file);
     }
+
+    // Hiç bulgu yok - BI-RADS 1
+    if (formData.findingType.length === 0) {
+      return {
+        category: 'BI-RADS 1',
+        description: 'Negatif mamografi - bulgu yok.',
+        recommendation: 'Rutin tarama mamografisi (1 yıl)',
+        risk: 'Malignite riski yok',
+        cssClass: 'birads-1'
+      };
+    }
+
+    // Kitle değerlendirmesi
+    if (formData.findingType.includes('kitle')) {
+      if (formData.shape && formData.margin) {
+        if (['yuvarlak', 'oval'].includes(formData.shape) && formData.margin === 'düzgün') {
+          if (formData.stable2yr) {
+            return {
+              category: 'BI-RADS 2',
+              description: 'Benign bulgu - 2 yıldır stabil kitle.',
+              recommendation: 'Rutin tarama mamografisi (1 yıl)',
+              risk: 'Malignite riski %0',
+              cssClass: 'birads-2'
+            };
+          } else {
+            return {
+              category: 'BI-RADS 3',
+              description: 'Muhtemelen benign bulgu.',
+              recommendation: '6 aylık takip önerilir',
+              risk: 'Malignite riski <%2',
+              cssClass: 'birads-3'
+            };
+          }
+        } else if (formData.margin === 'mikrolobüle') {
+          return {
+            category: 'BI-RADS 4A',
+            description: 'Düşük şüpheli bulgu.',
+            recommendation: 'Doku örneklemesi (biyopsi) önerilir',
+            risk: 'Malignite riski %2-10',
+            cssClass: 'birads-4a'
+          };
+        } else if (formData.margin === 'düzensiz') {
+          return {
+            category: 'BI-RADS 4B',
+            description: 'Orta şüpheli bulgu.',
+            recommendation: 'Doku örneklemesi (biyopsi) önerilir',
+            risk: 'Malignite riski %10-50',
+            cssClass: 'birads-4b'
+          };
+        } else if (formData.margin === 'spiküle') {
+          return {
+            category: 'BI-RADS 5',
+            description: 'Yüksek şüpheli bulgu.',
+            recommendation: 'Doku örneklemesi (biyopsi) önerilir',
+            risk: 'Malignite riski >%95',
+            cssClass: 'birads-5'
+          };
+        }
+      }
+    }
+
+    // Kalsifikasyon değerlendirmesi
+    if (formData.findingType.includes('kalsifikasyon')) {
+      if (formData.kalsifikasyonType === 'benign') {
+        return {
+          category: 'BI-RADS 2',
+          description: 'Benign kalsifikasyonlar.',
+          recommendation: 'Rutin tarama mamografisi (1 yıl)',
+          risk: 'Malignite riski %0',
+          cssClass: 'birads-2'
+        };
+      } else if (formData.kalsifikasyonType === 'şüpheli') {
+        return {
+          category: 'BI-RADS 4C',
+          description: 'Şüpheli kalsifikasyonlar.',
+          recommendation: 'Doku örneklemesi (biyopsi) önerilir',
+          risk: 'Malignite riski %50-95',
+          cssClass: 'birads-4c'
+        };
+      }
+    }
+
+    // Default BI-RADS 4A
+    return {
+      category: 'BI-RADS 4A',
+      description: 'Değerlendirme gerektiren bulgu.',
+      recommendation: 'Doku örneklemesi (biyopsi) önerilir',
+      risk: 'Malignite riski %2-10',
+      cssClass: 'birads-4a'
+    };
   };
 
-  const analyzeImage = async () => {
-    if (!selectedImage) return;
-    
-    setIsAnalyzing(true);
-    
-    // Simulated analysis - replace with actual API call
-    setTimeout(() => {
-      const mockResults: BiRadsResult[] = [
-        {
-          category: "BI-RADS 2",
-          description: "Benign findings",
-          recommendation: "Routine screening mammography in 1 year",
-          risk: "Essentially 0% risk of malignancy"
-        },
-        {
-          category: "BI-RADS 4A",
-          description: "Low suspicion for malignancy",
-          recommendation: "Tissue sampling (biopsy) recommended",
-          risk: "2-10% risk of malignancy"
-        },
-        {
-          category: "BI-RADS 4B",
-          description: "Moderate suspicion for malignancy",
-          recommendation: "Tissue sampling (biopsy) recommended",
-          risk: "10-50% risk of malignancy"
-        }
-      ];
-      
-      const randomResult = mockResults[Math.floor(Math.random() * mockResults.length)];
-      setResult(randomResult);
-      setIsAnalyzing(false);
-    }, 3000);
+  const handleSubmit = () => {
+    const biRadsResult = calculateBiRads();
+    setResult(biRadsResult);
+  };
+
+  const updateFormData = (key: keyof FormData, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const toggleFindingType = (finding: string) => {
+    setFormData(prev => ({
+      ...prev,
+      findingType: prev.findingType.includes(finding)
+        ? prev.findingType.filter(f => f !== finding)
+        : [...prev.findingType, finding]
+    }));
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                ← Back to Home
-              </Link>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                BI-RADS Analysis
-              </h1>
+      <header className="bg-white dark:bg-gray-800 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">BI</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  BI-RADS Değerlendirme Sistemi
+                </h1>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Mamografi Tabanlı Karar Destek</p>
+              </div>
             </div>
+            <Link 
+              href="/"
+              className="px-4 py-2 text-sm text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+            >
+              ← Ana Sayfa
+            </Link>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Upload Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Warning */}
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-8">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                ⚠️ Bu sistem yalnızca mamografik bulgular üzerinden BI-RADS kategorizasyonu yapar. 
+                US/MRI/klinik değerlendirme içermez.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {!result ? (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Upload Mammography Image
+              BI-RADS Değerlendirme Formu
             </h2>
-            
-            <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center">
-              {selectedImage ? (
-                <div className="space-y-4">
-                  <div className="relative w-full h-64 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                    <Image
-                      src={selectedImage}
-                      alt="Uploaded mammography"
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <div className="flex space-x-4 justify-center">
-                    <button
-                      onClick={analyzeImage}
-                      disabled={isAnalyzing}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold py-2 px-6 rounded-lg transition-colors"
-                    >
-                      {isAnalyzing ? 'Analyzing...' : 'Analyze Image'}
-                    </button>
-                    <label className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg cursor-pointer transition-colors">
-                      Upload New
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <div className="text-gray-600 dark:text-gray-300">
-                    <label className="cursor-pointer">
-                      <span className="text-blue-600 hover:text-blue-500 font-medium">
-                        Click to upload
-                      </span>
-                      {' '}or drag and drop
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    PNG, JPG, DICOM up to 10MB
-                  </p>
-                </div>
-              )}
+
+            {/* Tetkik Yeterli mi */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Tetkik yeterli mi?
+              </label>
+              <div className="space-y-2">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="examComplete"
+                    value="yes"
+                    checked={formData.examComplete === 'yes'}
+                    onChange={(e) => updateFormData('examComplete', e.target.value)}
+                    className="h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2 text-gray-700 dark:text-gray-300">Evet</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="examComplete"
+                    value="no"
+                    checked={formData.examComplete === 'no'}
+                    onChange={(e) => updateFormData('examComplete', e.target.value)}
+                    className="h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2 text-gray-700 dark:text-gray-300">Hayır</span>
+                </label>
+              </div>
             </div>
 
-            {isAnalyzing && (
-              <div className="mt-6 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span className="ml-2 text-gray-600 dark:text-gray-300">
-                  AI is analyzing your image...
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Results Section */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Analysis Results
-            </h2>
-            
-            {result ? (
-              <div className="space-y-6">
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-                  <h3 className="text-xl font-bold text-blue-800 dark:text-blue-200 mb-2">
-                    {result.category}
-                  </h3>
-                  <p className="text-blue-700 dark:text-blue-300">
-                    {result.description}
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Recommendation:
-                    </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {result.recommendation}
-                    </p>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                      Risk Assessment:
-                    </h4>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {result.risk}
-                    </p>
+            {formData.examComplete === 'yes' && (
+              <>
+                {/* Bulgu Tipi */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Bulgu Tipi (Çoklu seçim yapabilirsiniz)
+                  </label>
+                  <div className="space-y-2">
+                    {['kitle', 'kalsifikasyon', 'architectural-distortion', 'asimetri'].map((finding) => (
+                      <label key={finding} className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.findingType.includes(finding)}
+                          onChange={() => toggleFindingType(finding)}
+                          className="h-4 w-4 text-blue-600"
+                        />
+                        <span className="ml-2 text-gray-700 dark:text-gray-300 capitalize">
+                          {finding.replace('-', ' ')}
+                        </span>
+                      </label>
+                    ))}
                   </div>
                 </div>
 
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-                  <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors w-full">
-                    Generate Report
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-12">
-                <svg className="mx-auto h-12 w-12 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                <p>Upload an image to see analysis results</p>
-              </div>
-            )}
-          </div>
-        </div>
+                {/* Kitle Özellikleri */}
+                {formData.findingType.includes('kitle') && (
+                  <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Kitle Özellikleri</h3>
+                    
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Lezyon Şekli
+                        </label>
+                        <select
+                          value={formData.shape || ''}
+                          onChange={(e) => updateFormData('shape', e.target.value)}
+                          className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        >
+                          <option value="">Seçiniz</option>
+                          <option value="yuvarlak">Yuvarlak</option>
+                          <option value="oval">Oval</option>
+                          <option value="düzensiz">Düzensiz</option>
+                        </select>
+                      </div>
 
-        {/* BI-RADS Reference Table */}
-        <div className="mt-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            BI-RADS Classification Reference
-          </h2>
-          
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Assessment
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Risk of Malignancy
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                    Management
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 1</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Negative</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">0%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Routine screening</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 2</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Benign</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">0%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Routine screening</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 3</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Probably benign</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">&lt;2%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Short-term follow-up</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 4A</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Low suspicion</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">2-10%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Tissue sampling</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 4B</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Moderate suspicion</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">10-50%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Tissue sampling</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 4C</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">High suspicion</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">50-95%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Tissue sampling</td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">BI-RADS 5</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Highly suspicious</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">&gt;95%</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">Tissue sampling</td>
-                </tr>
-              </tbody>
-            </table>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Kenar Özelliği
+                        </label>
+                        <select
+                          value={formData.margin || ''}
+                          onChange={(e) => updateFormData('margin', e.target.value)}
+                          className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                        >
+                          <option value="">Seçiniz</option>
+                          <option value="düzgün">Düzgün</option>
+                          <option value="mikrolobüle">Mikrolobüle</option>
+                          <option value="düzensiz">Düzensiz</option>
+                          <option value="spiküle">Spiküle</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={formData.stable2yr || false}
+                          onChange={(e) => updateFormData('stable2yr', e.target.checked)}
+                          className="h-4 w-4 text-blue-600"
+                        />
+                        <span className="ml-2 text-gray-700 dark:text-gray-300">
+                          Kitle 2 yıldır takipte stabil mi?
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Kalsifikasyon Özellikleri */}
+                {formData.findingType.includes('kalsifikasyon') && (
+                  <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Kalsifikasyon Özellikleri</h3>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Kalsifikasyon Tipi
+                      </label>
+                      <select
+                        value={formData.kalsifikasyonType || ''}
+                        onChange={(e) => updateFormData('kalsifikasyonType', e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                      >
+                        <option value="">Seçiniz</option>
+                        <option value="benign">Benign (Periferal rim, popcorn, vb.)</option>
+                        <option value="şüpheli">Şüpheli (İnce pleomorfik, segmental, vb.)</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Submit Button */}
+            <div className="flex justify-center">
+              <button
+                onClick={handleSubmit}
+                disabled={!formData.examComplete}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-8 rounded-lg transition-colors"
+              >
+                BI-RADS Değerlendirmesi Yap
+              </button>
+            </div>
           </div>
+        ) : (
+          /* Result Display */
+          <div className="space-y-6">
+            <div className={`p-6 rounded-lg text-center ${
+              result.cssClass === 'birads-0' ? 'bg-gray-100 text-gray-800' :
+              result.cssClass === 'birads-1' ? 'bg-gray-100 text-gray-800' :
+              result.cssClass === 'birads-2' ? 'bg-green-100 text-green-800' :
+              result.cssClass === 'birads-3' ? 'bg-blue-100 text-blue-800' :
+              result.cssClass === 'birads-4a' ? 'bg-yellow-100 text-yellow-800' :
+              result.cssClass === 'birads-4b' ? 'bg-orange-100 text-orange-800' :
+              result.cssClass === 'birads-4c' ? 'bg-red-100 text-red-800' :
+              result.cssClass === 'birads-5' ? 'bg-red-200 text-red-900' :
+              'bg-gray-100 text-gray-800'
+            }`}>
+              <h2 className="text-3xl font-bold mb-2">{result.category}</h2>
+              <p className="text-lg mb-4">{result.description}</p>
+              <p className="text-sm font-medium mb-2">{result.recommendation}</p>
+              <p className="text-sm">{result.risk}</p>
+            </div>
+
+            {/* Reference Information */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+              <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">📖 Referans Bilgisi</h3>
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                American College of Radiology. BI-RADS® Atlas, 5th Edition. 
+                Bu değerlendirme standart BI-RADS kriterlerine göre yapılmıştır.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={() => {
+                  setResult(null);
+                  setFormData({ examComplete: '', findingType: [] });
+                }}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+              >
+                Yeni Değerlendirme
+              </button>
+              <Link
+                href="/"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition-colors"
+              >
+                Ana Sayfaya Dön
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            🩻 Developed by <strong>ERNC</strong> | Antalya Eğitim ve Araştırma Hastanesi, 2025
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+            Assistant Radiologists: Erdinç Hakan İnan & ❤️ Heves Yaren Karakaş ❤️
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
