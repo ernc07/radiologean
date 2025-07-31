@@ -66,44 +66,12 @@ export default function BiRadsPage() {
               </div>
             </div>
             
-            {/* Production Message */}
-            <div className="p-8 text-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20">
-              <div className="max-w-md mx-auto">
-                <div className="w-20 h-20 bg-blue-100 dark:bg-blue-800 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 8.172V5L8 4z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  BI-RADS Uygulaması Deploy Ediliyor
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Streamlit tabanlı interaktif BI-RADS değerlendirme sistemi production ortamına taşınıyor. 
-                  Yakında tam fonksiyonel olarak erişilebilir olacak.
-                </p>
-                <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-blue-200 dark:border-blue-600">
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    <strong>Şu an aktif özellikler:</strong>
-                  </p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                    <li>• Kategori 0-6 sınıflandırması</li>
-                    <li>• Mamografik bulgu analizi</li>
-                    <li>• Risk stratifikasyonu</li>
-                    <li>• ACR standardı uyumlu raporlama</li>
-                  </ul>
-                </div>
-                <div className="mt-4">
-                  <div className="flex justify-center space-x-1 mb-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">
-                    Deployment süreci devam ediyor...
-                  </p>
-                </div>
-              </div>
-            </div>
+            <iframe
+              src="https://radiologean-birads.onrender.com"
+              className="w-full h-screen border-0"
+              title="BI-RADS Streamlit App"
+              style={{ minHeight: '800px' }}
+            />
           </div>
         )}
 
