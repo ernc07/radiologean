@@ -5,11 +5,16 @@ import { useEffect, useState } from 'react';
 
 export default function BiRadsPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 2000);
+    const timer = setTimeout(() => setIsLoading(false), 1000); // Reduced from 2000ms
     return () => clearTimeout(timer);
   }, []);
+
+  const handleIframeLoad = () => {
+    setIframeLoaded(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -71,7 +76,18 @@ export default function BiRadsPage() {
               className="w-full h-screen border-0"
               title="BI-RADS Streamlit App"
               style={{ minHeight: '800px' }}
+              onLoad={handleIframeLoad}
+              loading="lazy"
             />
+            
+            {!iframeLoaded && (
+              <div className="absolute inset-0 bg-white dark:bg-gray-800 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Streamlit yükleniyor...</p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

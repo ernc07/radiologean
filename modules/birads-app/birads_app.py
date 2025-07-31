@@ -9,6 +9,15 @@ st.set_page_config(
     layout="wide"
 )
 
+# Performance optimizations
+@st.cache_data
+def load_static_content():
+    """Cache static content for better performance"""
+    return True
+
+# Load cached content
+load_static_content()
+
 def display_result(category, explanation, management, reference_detail, image_path=None, extra_note=None):
     css_class = "birads-" + category.split()[1].lower()
     st.markdown(

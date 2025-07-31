@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true
+  },
+  // Performance optimizations
+  compress: true,
+  poweredByHeader: false,
+  generateEtags: false,
+  // Experimental features for performance  
+  experimental: {
+    optimizeCss: true,
   }
 };
 
