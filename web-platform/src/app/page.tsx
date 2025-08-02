@@ -54,84 +54,118 @@ export default function Home() {
             Klinik Değerlendirme Araçları
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* BI-RADS */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-blue-600 dark:text-blue-400 font-semibold text-sm">BI</span>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Mevcut BI-RADS Card */}
+            <Link href="/birads" className="group">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    Mammografi
+                  </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">BI-RADS</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 leading-relaxed">
-                Breast Imaging Reporting and Data System. Meme görüntüleme için standart kategorizasyon sistemi.
-              </p>
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Kategoriler:</p>
-                <div className="flex flex-wrap gap-1">
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">0-6</span>
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">Risk değerlendirmesi</span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  BI-RADS Değerlendirme
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Meme radyolojisi için standart değerlendirme ve raporlama sistemi. Kategori 1-6 arası sınıflandırma.
+                </p>
+                <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+                  <span>Değerlendirmeye Başla</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
-              <Link 
-                href="/birads"
-                className="inline-block w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded transition-colors"
-              >
-                BI-RADS Değerlendirme
-              </Link>
-            </div>
+            </Link>
 
-            {/* PI-RADS */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-green-600 dark:text-green-400 font-semibold text-sm">PI</span>
+            {/* Mevcut PI-RADS Card */}
+            <Link href="/pirads" className="group">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    Prostat MRI
+                  </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">PI-RADS</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 leading-relaxed">
-                Prostate Imaging Reporting and Data System. Prostat MR görüntüleme için skorlama sistemi.
-              </p>
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Skorlama:</p>
-                <div className="flex flex-wrap gap-1">
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">1-5 Skor</span>
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">Malignite riski</span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  PI-RADS Skorlama
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Prostat MRI için standardize edilmiş raporlama sistemi. 1-5 arası risk kategorilendirmesi.
+                </p>
+                <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+                  <span>Değerlendirmeye Başla</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
-              <Link 
-                href="/pirads"
-                className="inline-block w-full text-center bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded transition-colors"
-              >
-                PI-RADS Skorlama
-              </Link>
-            </div>
+            </Link>
 
-            {/* Adrenal */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-purple-600 dark:text-purple-400 font-semibold text-sm">AD</span>
+            {/* YENİ TI-RADS Card */}
+            <Link href="/tirads" className="group">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    Tiroid USG
+                  </span>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Adrenal Bez</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 leading-relaxed">
-                Adrenal bez lezyonları için HU değeri hesaplamaları ve washout analizleri.
-              </p>
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Hesaplamalar:</p>
-                <div className="flex flex-wrap gap-1">
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">HU değerleri</span>
-                  <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">Washout %</span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                  TI-RADS Değerlendirme
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Tiroid nodüllerinin ultrasonografik değerlendirmesi için standardize edilmiş sınıflandırma sistemi.
+                </p>
+                <div className="flex items-center text-sm text-green-600 dark:text-green-400 font-medium">
+                  <span>Değerlendirmeye Başla</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </div>
-              <Link 
-                href="/adrenal"
-                className="inline-block w-full text-center bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded transition-colors"
-              >
-                Adrenal Hesaplama
-              </Link>
-            </div>
+            </Link>
+
+            {/* Mevcut Adrenal Card */}
+            <Link href="/adrenal" className="group">
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-yellow-300 dark:hover:border-yellow-600">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-yellow-600 dark:text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    Adrenal BT/MRI
+                  </span>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+                  Adrenal Karakterizasyonu
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                  Adrenal kitle lezyonlarının BT ve MRI ile karakterizasyonu için rehber ve hesaplama araçları.
+                </p>
+                <div className="flex items-center text-sm text-yellow-600 dark:text-yellow-400 font-medium">
+                  <span>Değerlendirmeye Başla</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
 
