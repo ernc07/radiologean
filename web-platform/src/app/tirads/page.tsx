@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'TI-RADS Tiroid Değerlendirme | Radiologean',
@@ -26,12 +27,12 @@ export default function TiRadsPage() {
                 <p className="text-xs text-gray-600 dark:text-gray-400">Tiroid Nodül Sınıflandırması</p>
               </div>
             </div>
-            <a
+            <Link
               href="/"
               className="text-sm text-gray-700 hover:text-green-600 dark:text-gray-300 dark:hover:text-green-400"
             >
               ← Ana Sayfa
-            </a>
+            </Link>
           </div>
         </div>
       </header>
