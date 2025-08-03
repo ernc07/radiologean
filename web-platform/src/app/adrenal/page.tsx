@@ -20,11 +20,7 @@ export default function AdrenalPage() {
       <div className="max-w-2xl mx-auto px-4 text-center">
         {/* Animated Adrenal Icon */}
         <div className="mb-8 relative">
-          <div className={`transition-transform duration-500 ${calculating ? 'scale-110' : 'scale-100'}`}>
-            <svg className="w-24 h-24 mx-auto text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            </svg>
-          </div>
+          <img src="/logo4.png" alt="Adrenal Logo" className="w-28 h-28 mx-auto rounded-2xl shadow-lg object-contain" />
           {/* Calculator display */}
           <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
             <div className="bg-green-400 text-black px-2 py-1 rounded text-xs font-mono">

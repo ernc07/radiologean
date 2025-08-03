@@ -22,11 +22,7 @@ export default function PiRadsPage() {
       <div className="max-w-2xl mx-auto px-4 text-center">
         {/* Animated Construction Icon */}
         <div className="mb-8 relative">
-          <div className="animate-bounce">
-            <svg className="w-24 h-24 mx-auto text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547A8.014 8.014 0 004 21h16a8.014 8.014 0 00-.244-5.572z" />
-            </svg>
-          </div>
+          <img src="/logo3.png" alt="PI-RADS Logo" className="w-28 h-28 mx-auto rounded-2xl shadow-lg object-contain" />
           {/* Construction Hat */}
           <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
             <div className="w-8 h-6 bg-yellow-400 rounded-t-full"></div>

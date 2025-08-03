@@ -19,6 +19,241 @@
   }
 }
 
+/* Beyaz mod için custom animasyonlar */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 1s ease-out;
+}
+
+.animate-fadeOut {
+  animation: fadeOut 1s ease-in;
+}
+
+/* Futuristic loading animations */
+@keyframes grid-move {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(50px, 50px);
+  }
+}
+
+@keyframes progress {
+  0% {
+    width: 0%;
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.8;
+  }
+}
+
+@keyframes hologram {
+  0%, 100% {
+    box-shadow: 0 0 10px cyan, 0 0 20px cyan, 0 0 30px cyan;
+  }
+  50% {
+    box-shadow: 0 0 20px purple, 0 0 40px purple, 0 0 60px purple;
+  }
+}
+
+.hologram-effect {
+  animation: hologram 2s ease-in-out infinite;
+}
+
+/* Liquid displacement wave effect inspired by Linkin Park */
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(0) scaleY(1);
+  }
+  25% {
+    transform: translateX(-20px) scaleY(1.1);
+  }
+  50% {
+    transform: translateX(0) scaleY(0.9);
+  }
+  75% {
+    transform: translateX(20px) scaleY(1.05);
+  }
+}
+
+/* Advanced liquid morphing with rotation */
+@keyframes liquid-morph {
+  0%, 100% {
+    border-radius: 50% 40% 60% 30%;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 40% 60% 30% 70%;
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    border-radius: 60% 30% 70% 40%;
+    transform: rotate(180deg) scale(0.9);
+  }
+  75% {
+    border-radius: 30% 70% 40% 60%;
+    transform: rotate(270deg) scale(1.05);
+  }
+}
+
+/* Enhanced floating logo spinner effect */
+@keyframes logo-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.05);
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.05);
+    filter: hue-rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Particle trail fade effect */
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+}
+
+/* Advanced velocity-based pulse */
+@keyframes velocity-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.3;
+  }
+}
+
+/* Complex wave distortion */
+@keyframes wave-distort {
+  0%, 100% {
+    transform: scaleX(1) scaleY(1) rotate(0deg);
+  }
+  33% {
+    transform: scaleX(1.1) scaleY(0.9) rotate(2deg);
+  }
+  66% {
+    transform: scaleX(0.9) scaleY(1.1) rotate(-2deg);
+  }
+}
+
+/* Enhanced Linkin Park-style liquid displacement effects */
+@keyframes theme-shift {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.9) rotate(-5deg);
+    filter: blur(5px);
+  }
+  50% { 
+    opacity: 0.7; 
+    transform: scale(1.1) rotate(2deg);
+    filter: blur(1px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1) rotate(0deg);
+    filter: blur(0px);
+  }
+}
+
+@keyframes liquid-displacement {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px) rotate(0deg) skew(0deg);
+    border-radius: 50%;
+    filter: hue-rotate(0deg);
+  }
+  20% {
+    transform: translateX(5px) translateY(-3px) rotate(15deg) skew(2deg);
+    border-radius: 45% 55% 50% 50%;
+    filter: hue-rotate(72deg);
+  }
+  40% {
+    transform: translateX(-2px) translateY(8px) rotate(-10deg) skew(-1deg);
+    border-radius: 55% 45% 60% 40%;
+    filter: hue-rotate(144deg);
+  }
+  60% {
+    transform: translateX(8px) translateY(-2px) rotate(25deg) skew(3deg);
+    border-radius: 40% 60% 45% 55%;
+    filter: hue-rotate(216deg);
+  }
+  80% {
+    transform: translateX(-5px) translateY(5px) rotate(-20deg) skew(-2deg);
+    border-radius: 60% 40% 55% 45%;
+    filter: hue-rotate(288deg);
+  }
+}
+
+@keyframes advanced-wave-distort {
+  0% { 
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    filter: hue-rotate(0deg) blur(0px);
+  }
+  25% { 
+    transform: translateX(-20px) translateY(10px) rotate(5deg) scale(1.05);
+    filter: hue-rotate(90deg) blur(1px);
+  }
+  50% { 
+    transform: translateX(0) translateY(-15px) rotate(-3deg) scale(0.98);
+    filter: hue-rotate(180deg) blur(2px);
+  }
+  75% { 
+    transform: translateX(15px) translateY(5px) rotate(8deg) scale(1.02);
+    filter: hue-rotate(270deg) blur(1px);
+  }
+  100% { 
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    filter: hue-rotate(360deg) blur(0px);
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

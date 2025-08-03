@@ -23,9 +23,7 @@ export default function BiRadsPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">BI</span>
-              </div>
+              <img src="/logo2.png" alt="BI-RADS Logo" className="w-16 h-16 rounded-2xl shadow-lg object-contain" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                   BI-RADS Değerlendirme Sistemi

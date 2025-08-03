@@ -1,10 +1,394 @@
+'use client';
+
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
 export default function Home() {
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+  const [mouseVelocity, setMouseVelocity] = useState({ x: 0, y: 0 });
+  const [currentTheme, setCurrentTheme] = useState(0);
+  const [themeTransition, setThemeTransition] = useState(0);
+  const [timeOffset, setTimeOffset] = useState(0);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [screenSize, setScreenSize] = useState({ width: 1920, height: 1080 });
+
+  // Linkin Park style theme system - multiple themes that cycle
+  const themes = [
+    {
+      name: 'Medical Blue',
+      primary: { h: 210, s: 80, l: 55 },
+      secondary: { h: 190, s: 75, l: 60 },
+      accent: { h: 230, s: 85, l: 50 },
+      texture: 'medical'
+    },
+    {
+      name: 'Neural Purple',
+      primary: { h: 280, s: 75, l: 60 },
+      secondary: { h: 300, s: 80, l: 55 },
+      accent: { h: 260, s: 85, l: 65 },
+      texture: 'neural'
+    },
+    {
+      name: 'Cyber Cyan',
+      primary: { h: 180, s: 85, l: 60 },
+      secondary: { h: 160, s: 80, l: 65 },
+      accent: { h: 200, s: 90, l: 55 },
+      texture: 'cyber'
+    },
+    {
+      name: 'Radiology Green',
+      primary: { h: 120, s: 70, l: 55 },
+      secondary: { h: 140, s: 75, l: 60 },
+      accent: { h: 100, s: 80, l: 50 },
+      texture: 'radiology'
+    },
+    {
+      name: 'X-Ray Orange',
+      primary: { h: 30, s: 80, l: 60 },
+      secondary: { h: 50, s: 75, l: 65 },
+      accent: { h: 10, s: 85, l: 55 },
+      texture: 'xray'
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 2500);
+
+    // Theme cycling system like Linkin Park
+    const themeInterval = setInterval(() => {
+      setCurrentTheme(prev => (prev + 1) % themes.length);
+      setThemeTransition(1);
+      
+      // Smooth transition back
+      setTimeout(() => setThemeTransition(0), 2000);
+    }, 8000); // Change theme every 8 seconds
+
+    // Time-based animation
+    const timeInterval = setInterval(() => {
+      setTimeOffset(prev => prev + 0.001); // Daha yavaş animasyon
+    }, 16);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(themeInterval);
+      clearInterval(timeInterval);
+    };
+  }, [themes.length]);
+
+  useEffect(() => {
+    let lastPos = { x: 0, y: 0 };
+    let lastTime = Date.now();
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const currentTime = Date.now();
+      const deltaTime = currentTime - lastTime;
+      
+      const newPos = {
+        x: typeof window !== 'undefined' ? (e.clientX / window.innerWidth) * 100 : 50,
+        y: typeof window !== 'undefined' ? (e.clientY / window.innerHeight) * 100 : 50
+      };
+
+      const velocity = {
+        x: (newPos.x - lastPos.x) / (deltaTime || 1) * 1000,
+        y: (newPos.y - lastPos.y) / (deltaTime || 1) * 1000
+      };
+
+      setMousePos(newPos);
+      setMouseVelocity(velocity);
+
+      // Mouse activity triggers theme transitions
+      const intensity = Math.abs(velocity.x) + Math.abs(velocity.y);
+      if (intensity > 50) {
+        setThemeTransition(Math.min(1, intensity / 200));
+      }
+
+      lastPos = newPos;
+      lastTime = currentTime;
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', handleMouseMove);
+    }
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('mousemove', handleMouseMove);
+      }
+    };
+  }, []);
+
+  // Advanced theme blending system
+  const getCurrentColors = () => {
+    const currentThemeData = themes[currentTheme];
+    const nextThemeData = themes[(currentTheme + 1) % themes.length];
+    const t = themeTransition;
+    
+    // Mouse influence on colors
+    const mouseInfluence = Math.sqrt(mousePos.x * mousePos.x + mousePos.y * mousePos.y) / 100;
+    const velocityInfluence = Math.min(Math.sqrt(mouseVelocity.x * mouseVelocity.x + mouseVelocity.y * mouseVelocity.y) / 50, 1);
+    
+    // Blend themes
+    const blendColor = (color1: { h: number; s: number; l: number }, color2: { h: number; s: number; l: number }, blend: number, offset: number = 0) => {
+      const h = (color1.h + (color2.h - color1.h) * blend + mousePos.x * 0.5 + timeOffset * 20 + offset) % 360;
+      const s = Math.min(100, color1.s + (color2.s - color1.s) * blend + velocityInfluence * 20);
+      const l = Math.min(90, color1.l + (color2.l - color1.l) * blend + mouseInfluence * 15);
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    };
+
+    return {
+      primary: blendColor(currentThemeData.primary, nextThemeData.primary, t),
+      secondary: blendColor(currentThemeData.secondary, nextThemeData.secondary, t),
+      tertiary: blendColor(currentThemeData.accent, nextThemeData.accent, t),
+      accent: blendColor(currentThemeData.accent, nextThemeData.accent, t, 60),
+      accent1: blendColor(currentThemeData.primary, nextThemeData.secondary, t, 120),
+      accent2: blendColor(currentThemeData.secondary, nextThemeData.primary, t, 180),
+      accent3: blendColor(currentThemeData.accent, nextThemeData.primary, t, 240),
+      velocity1: blendColor(currentThemeData.primary, nextThemeData.accent, t, velocityInfluence * 50),
+      velocity2: blendColor(currentThemeData.secondary, nextThemeData.accent, t, velocityInfluence * 80),
+      texture: currentThemeData.texture
+    };
+  };
+  
+
+  const colors = getCurrentColors();
+
+  useEffect(() => {
+    if (progress < 100) {
+      const timer = setTimeout(() => setProgress(progress + 2), 18);
+      return () => clearTimeout(timer);
+    }
+  }, [progress]);
+
+  useEffect(() => {
+    const updateSize = () => {
+      setScreenSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  const waveCount = Math.round(screenSize.height / 40);
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 relative overflow-hidden">
+      {/* True Linkin Park Style Liquid Displacement Background */}
+      <div className="absolute inset-0 transition-all duration-1000 ease-out overflow-hidden">
+        {/* Base gradient that shifts with themes */}
+        <div 
+          className="absolute inset-0 transition-all duration-2000"
+          style={{
+            background: `
+              linear-gradient(135deg, 
+                ${colors.primary}15 0%, 
+                ${colors.secondary}10 25%, 
+                ${colors.tertiary}12 50%, 
+                ${colors.accent}08 75%, 
+                ${colors.primary}05 100%
+              )
+            `
+          }}
+        />
+
+        {/* Animated liquid texture displacement */}
+        <div 
+          className="absolute inset-0 transition-all duration-500"
+          style={{
+            background: `
+              radial-gradient(circle at ${mousePos.x + 10}% ${mousePos.y + 10}%, ${colors.velocity1}25, transparent 50%),
+              radial-gradient(circle at ${mousePos.x - 10}% ${mousePos.y - 10}%, ${colors.velocity2}20, transparent 45%),
+              radial-gradient(circle at ${mousePos.x + 20}% ${mousePos.y - 15}%, ${colors.accent1}15, transparent 40%),
+              radial-gradient(circle at ${mousePos.x - 15}% ${mousePos.y + 20}%, ${colors.accent2}18, transparent 55%)
+            `,
+            transform: `scale(${1 + themeTransition * 0.1}) rotate(${themeTransition * 5}deg)`,
+            filter: `blur(${themeTransition * 2}px)`
+          }}
+        />
+
+        {/* Procedural liquid waves */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              url("data:image/svg+xml,%3Csvg width='${screenSize.width}' height='${screenSize.height}' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cfilter id='liquid'%3E%3CfeTurbulence baseFrequency='0.04' numOctaves='4' type='fractalNoise'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='35'/%3E%3C/filter%3E%3C/defs%3E${
+                Array.from({length: waveCount}).map((_, i) => {
+                  const baseY = Math.round(i * (screenSize.height / (waveCount - 1))) + Math.sin(timeOffset * 1.1 + i) * 18;
+                  const amp = 18 + i * 2.2 + Math.cos(timeOffset * 0.8 + i) * 8;
+                  const freq = 1.1 + i * 0.14 + Math.sin(timeOffset * 0.6 + i) * 0.18;
+                  const points = Array.from({length: 17}).map((_, j) => {
+                    const x = Math.round(j * (screenSize.width / 16));
+                    const lineY = Math.round(i * (screenSize.height / (waveCount - 1)));
+                    const mouseY = mousePos.y * screenSize.height / 100;
+                    const mouseX = mousePos.x * screenSize.width / 100;
+                    const proximityY = 1 - Math.min(Math.abs(mouseY - lineY) / (screenSize.height / 10), 1);
+                    const proximityX = 1 - Math.min(Math.abs(mouseX - x) / (screenSize.width / 10), 1);
+                    const proximity = proximityY * proximityX;
+
+                    // Genlik ve distortion daha yumuşak
+                    const dynamicAmp = amp + proximity * 8;
+                    const distortion = 0.3 + proximity * 2.2;
+
+                    // Çarpanı küçült: j * distortion yerine j * distortion * 0.4
+                    const y = baseY + Math.sin(timeOffset * freq + i + j * distortion * 0.4) * dynamicAmp;
+                    return `${x},${y}`;
+                  }).join(' ');
+                  const color = [
+                    colors.primary, colors.secondary, colors.accent, colors.tertiary,
+                    colors.accent1, colors.accent2, colors.accent3
+                  ][i % 7];
+                  const opacity = 0.16 + (i % 5) * 0.07 + Math.abs(Math.sin(timeOffset + i)) * 0.07;
+                  const strokeWidth = 2 + (i % 3);
+                  return `%3Cpolyline points='${points}' stroke='${encodeURIComponent(color)}' stroke-width='${strokeWidth}' fill='none' opacity='${opacity}' filter='url(%23liquid)'/%3E`;
+                }).join('')
+              }%3C/svg%3E")
+            `,
+            backgroundSize: `${screenSize.width}px ${screenSize.height}px`,
+            animation: 'wave-distort 25s ease-in-out infinite',
+            transform: `
+              translate(${mousePos.x * 1.2}px, ${mousePos.y * 0.8}px) 
+              rotate(${mousePos.x * 0.03 + timeOffset * 0.5}deg) 
+              scale(${1 + themeTransition * 0.2})
+            `,
+            opacity: 0.6 + themeTransition * 0.3
+          }}
+        />
+
+        {/* Theme-based particle system */}
+        <div className="absolute inset-0">
+          {[...Array(12)].map((_, i) => {
+            const angle = (i / 12) * Math.PI * 2 + timeOffset * 0.5;
+            const radius = 100 + mousePos.x * 2 + mousePos.y * 1.5;
+            const x = 50 + Math.cos(angle) * (radius / (typeof window !== 'undefined' ? window.innerWidth : 1000) * 100 || 10);
+            const y = 50 + Math.sin(angle) * (radius / (typeof window !== 'undefined' ? window.innerHeight : 1000) * 100 || 10);
+            
+            return (
+              <div
+                key={i}
+                className="absolute transition-all duration-700 ease-out"
+                style={{
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  width: `${8 + i * 2 + themeTransition * 10}px`,
+                  height: `${8 + i * 2 + themeTransition * 10}px`,
+                  background: i % 4 === 0 ? colors.primary : i % 4 === 1 ? colors.secondary : i % 4 === 2 ? colors.accent : colors.tertiary,
+                  borderRadius: '50%',
+                  opacity: 0.15 + themeTransition * 0.2,
+                  transform: `
+                    translate(-50%, -50%) 
+                    scale(${1 + Math.sin(timeOffset * 3 + i) * 0.5 + themeTransition * 0.8}) 
+                    rotate(${timeOffset * 20 + i * 30}deg)
+                  `,
+                  filter: `blur(${1 + themeTransition * 2}px) hue-rotate(${timeOffset * 40 + i * 15}deg)`,
+                  mixBlendMode: 'multiply'
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Quantum Loading Screen */}
+      {!isLoaded && (
+        <div
+          className="fixed inset-0 flex items-center justify-center z-50"
+          style={{
+            background: "linear-gradient(135deg, #0f172a 0%, #312e81 60%, #0891b2 100%)",
+            minHeight: "100vh",
+            minWidth: "100vw",
+            overflow: "hidden"
+          }}
+        >
+          <div className="flex flex-col items-center justify-center gap-6">
+            {/* Belirgin ve dolan loading ringler */}
+            <div className="relative flex items-center justify-center" style={{ width: 180, height: 180 }}>
+              {/* Dış ring */}
+              <div
+                className="w-40 h-40 border-4 rounded-full animate-spin"
+                style={{
+                  borderColor: `rgba(34,211,238,${0.7 * Math.min(progress/100, 1)})`,
+                  boxShadow: `0 0 32px 8px rgba(34,211,238,${0.4 * Math.min(progress/100, 1)})`,
+                  filter: `blur(${4 - progress/40}px)`,
+                  animationDuration: '2s',
+                  opacity: 0.7 * Math.min(progress/100, 1)
+                }}
+              ></div>
+              {/* 2. ring */}
+              <div
+                className="absolute top-4 left-4 w-32 h-32 border-4 rounded-full animate-spin"
+                style={{
+                  borderColor: `rgba(168,85,247,${0.7 * Math.min(progress/80, 1)})`,
+                  boxShadow: `0 0 24px 4px rgba(168,85,247,${0.3 * Math.min(progress/80, 1)})`,
+                  filter: `blur(${5 - progress/60}px)`,
+                  animationDirection: 'reverse',
+                  animationDuration: '1.5s',
+                  opacity: 0.7 * Math.min(progress/80, 1)
+                }}
+              ></div>
+              {/* 3. ring */}
+              <div
+                className="absolute top-8 left-8 w-24 h-24 border-4 rounded-full animate-spin"
+                style={{
+                  borderColor: `rgba(59,130,246,${0.7 * Math.min(progress/60, 1)})`,
+                  boxShadow: `0 0 12px 2px rgba(59,130,246,${0.2 * Math.min(progress/60, 1)})`,
+                  filter: `blur(${6 - progress/80}px)`,
+                  animationDuration: '1s',
+                  opacity: 0.7 * Math.min(progress/60, 1)
+                }}
+              ></div>
+              {/* 4. ring */}
+              <div
+                className="absolute top-12 left-12 w-16 h-16 border-2 rounded-full animate-spin"
+                style={{
+                  borderColor: `rgba(103,232,249,${0.7 * Math.min(progress/40, 1)})`,
+                  boxShadow: `0 0 8px 1px rgba(103,232,249,${0.2 * Math.min(progress/40, 1)})`,
+                  filter: `blur(${7 - progress/100}px)`,
+                  animationDirection: 'reverse',
+                  animationDuration: '0.7s',
+                  opacity: 0.7 * Math.min(progress/40, 1)
+                }}
+              ></div>
+              {/* İç merkez */}
+              <div
+                className="absolute top-16 left-16 w-8 h-8 rounded-full animate-bounce"
+                style={{
+                  background: `rgba(34,211,238,${0.7 * Math.min(progress/100, 1)})`,
+                  boxShadow: `0 0 16px 2px rgba(34,211,238,${0.3 * Math.min(progress/100, 1)})`,
+                  opacity: 0.7 * Math.min(progress/100, 1)
+                }}
+              ></div>
+              <div
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full animate-ping"
+                style={{
+                  opacity: 0.7 * Math.min(progress/100, 1)
+                }}
+              ></div>
+            </div>
+            {/* Title ve status mesajları */}
+            <div className="text-cyan-400 font-mono text-3xl font-bold tracking-wider text-center drop-shadow-lg">
+              Radiologean
+            </div>
+            <div className="text-cyan-300/90 font-mono text-lg animate-pulse text-center drop-shadow">
+              [ MEDICAL AI SYSTEMS ONLINE ]
+            </div>
+            <div className="text-cyan-400/80 font-mono text-sm text-center">
+              <span className="animate-bounce">●</span> Assembling Neural Networks...
+            </div>
+            <div className="text-cyan-400/60 font-mono text-xs text-center">
+              <span className="animate-ping">▶</span> Loading Medical Databases...
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header with Slide Animation */}
+      <header className={`bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 transition-all duration-1000 ${
+        isLoaded ? 'transform translate-y-0 opacity-100' : 'transform -translate-y-full opacity-0'
+      }`}>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
@@ -36,77 +420,169 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+        {/* Interactive Floating Liquid Elements */}
+        <div 
+          className="absolute top-20 right-10 w-20 h-20 rounded-full transition-all duration-700 ease-out" 
+          style={{ 
+            background: `radial-gradient(circle, ${colors.primary}25, transparent)`,
+            animation: 'liquid-morph 18s ease-in-out infinite',
+            transform: `translate(${mousePos.x * 0.2}px, ${mousePos.y * 0.15}px) scale(${1 + Math.sin(mousePos.x * 0.02) * 0.3})`
+          }}
+        ></div>
+        <div 
+          className="absolute top-40 left-5 w-16 h-16 rounded-full transition-all duration-500 ease-out" 
+          style={{ 
+            background: `radial-gradient(circle, ${colors.secondary}20, transparent)`,
+            animation: 'liquid-morph 14s ease-in-out infinite reverse',
+            transform: `translate(${-mousePos.x * 0.1}px, ${mousePos.y * 0.2}px) scale(${1 + Math.cos(mousePos.y * 0.02) * 0.4})`
+          }}
+        ></div>
+        <div 
+          className="absolute bottom-20 right-20 w-24 h-24 rounded-full transition-all duration-600 ease-out" 
+          style={{ 
+            background: `radial-gradient(circle, ${colors.tertiary}18, transparent)`,
+            animation: 'liquid-morph 16s ease-in-out infinite',
+            transform: `translate(${mousePos.x * 0.12}px, ${-mousePos.y * 0.18}px) scale(${1 + Math.sin((mousePos.x + mousePos.y) * 0.015) * 0.35})`
+          }}
+        ></div>
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Radyoloji Destek Sistemi
+        <div className={`text-center mb-12 transition-all duration-1000 delay-300 relative ${
+          isLoaded ? 'transform translate-y-0 opacity-100' : 'transform translate-y-10 opacity-0'
+        }`}>
+          {/* Dynamic Liquid Morphing Background Elements */}
+          <div 
+            className="absolute -top-20 -left-20 w-40 h-40 rounded-full transition-all duration-500 ease-out" 
+            style={{ 
+              background: `radial-gradient(circle, ${colors.primary}15, ${colors.secondary}10, transparent)`,
+              animation: 'liquid-morph 15s ease-in-out infinite',
+              transform: `translate(${mousePos.x * 0.1}px, ${mousePos.y * 0.1}px) scale(${1 + Math.sin(mousePos.x * 0.01) * 0.2})`
+            }}
+          ></div>
+          <div 
+            className="absolute -top-10 -right-20 w-32 h-32 rounded-full transition-all duration-700 ease-out" 
+            style={{ 
+              background: `radial-gradient(circle, ${colors.secondary}12, ${colors.tertiary}08, transparent)`,
+              animation: 'liquid-morph 12s ease-in-out infinite reverse',
+              transform: `translate(${-mousePos.x * 0.15}px, ${mousePos.y * 0.12}px) scale(${1 + Math.cos(mousePos.y * 0.01) * 0.25})`
+            }}
+          ></div>
+          
+          {/* Enhanced Spinning Logo Effect */}
+          <div className="inline-block mb-6 transition-all duration-300" style={{ 
+            animation: 'logo-spin 20s linear infinite',
+            transform: `scale(${1 + (mousePos.x + mousePos.y) * 0.001})`
+          }}>
+            <div 
+              className="w-16 h-16 rounded-lg flex items-center justify-center shadow-2xl transition-all duration-300"
+              style={{
+                background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary}, ${colors.tertiary})`,
+                boxShadow: `0 10px 30px ${colors.primary}40`
+              }}
+            >
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <span 
+              className="bg-clip-text text-transparent animate-pulse transition-all duration-500"
+              style={{
+                backgroundImage: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary}, ${colors.tertiary})`,
+                textShadow: `0 0 20px ${colors.primary}30`
+              }}
+            >
+              Radyoloji Destek Sistemi
+            </span>
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Klinik pratikte kullanım için geliştirilmiş standart radyolojik değerlendirme araçları. 
             BI-RADS, PI-RADS kategorizasyonları ve adrenal bez analizleri için referans rehberi.
           </p>
         </div>
 
         {/* Clinical Tools Section */}
-        <div id="tools" className="mb-16">
+        <div id="tools" className={`mb-16 transition-all duration-1000 delay-500 ${
+          isLoaded ? 'transform translate-y-0 opacity-100' : 'transform translate-y-20 opacity-0'
+        }`}>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            Klinik Değerlendirme Araçları
+            <span className="relative">
+              Klinik Değerlendirme Araçları
+              <div 
+                className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 rounded-full transition-all duration-500"
+                style={{
+                  background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
+                  boxShadow: `0 0 10px ${colors.primary}50`
+                }}
+              ></div>
+            </span>
           </h2>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Mevcut BI-RADS Card */}
-            <Link href="/birads" className="group">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <Link href="/birads" className={`group transition-all duration-700 delay-700 ${
+              isLoaded ? 'transform scale-100 opacity-100 translate-y-0' : 'transform scale-90 opacity-0 translate-y-10'
+            }`}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-pink-300 dark:hover:border-pink-600 relative overflow-hidden hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <svg className="w-6 h-6 text-pink-600 dark:text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                      Mammografi
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                    BI-RADS Değerlendirme
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Meme radyolojisi için standart değerlendirme ve raporlama sistemi. Kategori 1-6 arası sınıflandırma.
+                  </p>
+                  <div className="flex items-center text-sm text-pink-600 dark:text-pink-400 font-medium">
+                    <span>Değerlendirmeye Başla</span>
+                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
-                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                    Mammografi
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  BI-RADS Değerlendirme
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  Meme radyolojisi için standart değerlendirme ve raporlama sistemi. Kategori 1-6 arası sınıflandırma.
-                </p>
-                <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
-                  <span>Değerlendirmeye Başla</span>
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </div>
               </div>
             </Link>
 
             {/* Mevcut PI-RADS Card */}
-            <Link href="/pirads" className="group">
-              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <Link href="/pirads" className={`group transition-all duration-700 delay-800 ${
+              isLoaded ? 'transform scale-100 opacity-100 translate-y-0' : 'transform scale-90 opacity-0 translate-y-10'
+            }`}>
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 relative overflow-hidden hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                      Prostat MRI
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    PI-RADS Skorlama
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                    Prostat MRI için standardize edilmiş raporlama sistemi. 1-5 arası risk kategorilendirmesi.
+                  </p>
+                  <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
+                    <span>Değerlendirmeye Başla</span>
+                    <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
-                  <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
-                    Prostat MRI
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  PI-RADS Skorlama
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  Prostat MRI için standardize edilmiş raporlama sistemi. 1-5 arası risk kategorilendirmesi.
-                </p>
-                <div className="flex items-center text-sm text-blue-600 dark:text-blue-400 font-medium">
-                  <span>Değerlendirmeye Başla</span>
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </div>
               </div>
             </Link>

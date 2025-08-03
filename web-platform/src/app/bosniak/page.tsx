@@ -15,11 +15,7 @@ export default function BosniakPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-              </div>
+              <img src="/logo1.png" alt="Bosniak Logo" className="w-20 h-20 rounded-2xl shadow-lg object-contain" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                   Bosniak Klasifikasyonu
