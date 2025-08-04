@@ -1,11 +1,6 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'TI-RADS Tiroid Değerlendirme | Radiologean',
-  description: 'TI-RADS sınıflandırma sistemi ve interaktif hesaplama aracı. Bilimsel ve akademik referanslara dayalı, güvenilir tiroid nodül değerlendirme desteği.',
-  keywords: 'TI-RADS, tiroid, ultrasonografi, nodül, radyoloji, ACR TI-RADS, akademik, bilimsel'
-};
+import Link from 'next/link';
 
 export default function TiRadsPage() {
   return (
