@@ -1,0 +1,210 @@
+/* Matrix Scrolling Text - "Wake up, Heves..." Effect */
+.matrix-scrolling-text {
+  position: fixed;
+  top: 120px;
+  right: -100%;
+  z-index: 1000;
+  pointer-events: none;
+  animation: slideFromRight 8s ease-in-out forwards;
+  max-width: 400px;
+}
+
+@keyframes slideFromRight {
+  0% {
+    right: -100%;
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  15% {
+    right: 20px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  85% {
+    right: 20px;
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    right: -100%;
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+.matrix-text {
+  font-family: 'Courier New', 'Monaco', monospace;
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff41;
+  text-shadow: 
+    0 0 5px #00ff41,
+    0 0 10px #00ff41,
+    0 0 20px #00ff41,
+    0 0 30px rgba(0, 255, 65, 0.8);
+  background: rgba(0, 0, 0, 0.95);
+  padding: 15px 25px;
+  border: 2px solid #00ff41;
+  border-radius: 6px;
+  white-space: nowrap;
+  letter-spacing: 2px;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 0 20px rgba(0, 255, 65, 0.3),
+    inset 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+.matrix-cursor {
+  animation: matrixBlink 0.8s infinite;
+  color: #00ff41;
+  text-shadow: 
+    0 0 5px #00ff41,
+    0 0 10px #00ff41;
+}
+
+@keyframes matrixBlink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Terminal scan line effect */
+.matrix-text::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 255, 65, 0.1) 48%,
+    rgba(0, 255, 65, 0.2) 50%,
+    rgba(0, 255, 65, 0.1) 52%,
+    transparent 100%
+  );
+  animation: matrixScanline 3s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes matrixScanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+/* Matrix glitch effect (subtle) */
+.matrix-text::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 255, 65, 0.03) 49%,
+    rgba(0, 255, 65, 0.06) 50%,
+    rgba(0, 255, 65, 0.03) 51%,
+    transparent 100%
+  );
+  animation: matrixGlitch 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes matrixGlitch {
+  0%, 95% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  96% {
+    transform: translateX(-2px);
+    opacity: 1;
+  }
+  97% {
+    transform: translateX(2px);
+    opacity: 1;
+  }
+  98% {
+    transform: translateX(-1px);
+    opacity: 1;
+  }
+  99%, 100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
+
+/* Breathing glow effect */
+.matrix-text {
+  animation: matrixBreath 4s ease-in-out infinite;
+}
+
+@keyframes matrixBreath {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(0, 255, 65, 0.3),
+      inset 0 0 20px rgba(0, 255, 65, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(0, 255, 65, 0.5),
+      inset 0 0 30px rgba(0, 255, 65, 0.2);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .matrix-scrolling-text {
+    top: 80px;
+    max-width: 320px;
+  }
+  
+  .matrix-text {
+    font-size: 14px;
+    padding: 12px 18px;
+    letter-spacing: 1px;
+  }
+  
+  @keyframes slideFromRight {
+    0% {
+      right: -100%;
+      opacity: 0;
+    }
+    15% {
+      right: 10px;
+      opacity: 1;
+    }
+    85% {
+      right: 10px;
+      opacity: 1;
+    }
+    100% {
+      right: -100%;
+      opacity: 0;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .matrix-scrolling-text {
+    top: 70px;
+    max-width: 280px;
+  }
+  
+  .matrix-text {
+    font-size: 12px;
+    padding: 10px 15px;
+    letter-spacing: 0.5px;
+  }
+}
