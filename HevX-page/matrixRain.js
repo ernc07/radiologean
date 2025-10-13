@@ -9,17 +9,22 @@ class NeuroHevesMatrixRain {
         this.columns = [];
         this.frameCount = 0;
         
-        // Enhanced Matrix configuration - Authentication Based
+        // Enhanced Matrix configuration - Authentication Based + Love System
         this.fontSize = 11;
         this.matrixChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=[]{}|;:',.<>?/~`アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン電脳医学画像解析診断放射線科学NEUROHEVES";
         this.secretMessage = "I❤HEVES";
-        this.loveChars = "ILOVEHES";
+        this.loveChars = "I❤HEVES";
         this.rainSpeed = this.getAuthBasedSpeed(); // Authentication'a göre hız
         this.glowIntensity = this.getAuthBasedGlow(); // Authentication'a göre parlaklık
         
-        // Secret message state
+        // Love Message System - Enhanced
         this.secretMessageColumn = -1;
         this.secretMessageTimer = 0;
+        this.loveColumns = new Set(); // Track love message columns
+        this.characterCache = new Map(); // Performance optimization
+        
+        // Speed variation system
+        this.speedCategories = [0.3, 0.6, 1.0, 1.5, 2.0, 3.0];
         
         this.init();
     }
@@ -103,27 +108,59 @@ class NeuroHevesMatrixRain {
     }
     
     initializeColumns() {
-        const columnCount = Math.floor(this.width / this.fontSize) + 5; // More columns for density
+        const columnCount = Math.floor(this.width / this.fontSize) + 5;
         this.columns = [];
         
         for (let i = 0; i < columnCount; i++) {
-            this.columns.push({
+            // 2% chance for love columns
+            const isLoveColumn = Math.random() < 0.02;
+            
+            // Speed variation system
+            const speedCategory = this.speedCategories[Math.floor(Math.random() * this.speedCategories.length)];
+            
+            const column = {
                 x: i * this.fontSize,
-                y: Math.random() * -800 - 200, // Deeper staggered start
-                speed: 0.8 + Math.random() * 1.5, // Much faster base speed
-                brightness: 0.6 + Math.random() * 0.4, // Brighter overall
-                trailLength: 15 + Math.floor(Math.random() * 25), // Longer trails
-                characters: [] // Character cache
-            });
+                y: Math.random() * -800 - 200,
+                speed: speedCategory * (0.8 + Math.random() * 0.4), // Variable speeds
+                brightness: 0.6 + Math.random() * 0.4,
+                trailLength: Math.floor((15 + Math.random() * 25) * 1.75), // 75% longer trails
+                characters: [],
+                isLoveColumn: isLoveColumn,
+                loveMessageIndex: 0
+            };
+            
+            if (isLoveColumn) {
+                this.loveColumns.add(i);
+            }
+            
+            this.columns.push(column);
         }
     }
     
-    getRandomChar(useSecret = false) {
-        // Subtle love character injection (11% chance)
-        if (useSecret && Math.random() < 0.11) {
-            return this.loveChars[Math.floor(Math.random() * this.loveChars.length)];
+    getRandomChar(column = null) {
+        // Love column system - stable character flow
+        if (column && column.isLoveColumn) {
+            const loveChar = this.loveChars[column.loveMessageIndex % this.loveChars.length];
+            column.loveMessageIndex++;
+            return loveChar;
         }
-        return this.matrixChars[Math.floor(Math.random() * this.matrixChars.length)];
+        
+        // Use character cache for performance
+        const cacheKey = 'random_' + Math.floor(Math.random() * 100);
+        if (this.characterCache.has(cacheKey)) {
+            return this.characterCache.get(cacheKey);
+        }
+        
+        const char = this.matrixChars[Math.floor(Math.random() * this.matrixChars.length)];
+        this.characterCache.set(cacheKey, char);
+        
+        // Limit cache size
+        if (this.characterCache.size > 200) {
+            const firstKey = this.characterCache.keys().next().value;
+            this.characterCache.delete(firstKey);
+        }
+        
+        return char;
     }
     
     isLoveChar(char) {
@@ -180,9 +217,9 @@ class NeuroHevesMatrixRain {
             const column = this.columns[i];
             const charIndex = Math.floor(column.y / this.fontSize);
             
-            // Update character cache
+            // Update character cache with column-specific logic
             if (!column.characters[charIndex]) {
-                column.characters[charIndex] = this.getRandomChar(true);
+                column.characters[charIndex] = this.getRandomChar(column);
             }
             
             // Draw trail with gradient effect

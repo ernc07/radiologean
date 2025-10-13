@@ -18,7 +18,7 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>"">
-    <link rel="stylesheet" href="HevX.css">
+    <link rel="stylesheet" href="HevX.css?v=20251013-2400-exact-header-copy" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Generative AI SDK -->
@@ -36,7 +36,7 @@
     <div id="matrixScrollingText" class="matrix-scrolling-text"></div>
     
     <div class="container">
-        <!-- Header -->
+        <!-- Header - Container içinde (ana ekran için) -->
         <header class="header">
             <div class="header-content">
                 <div class="logo neuroheves-logo">
@@ -52,6 +52,33 @@
                         </div>
                     </div>
                 </div>
+                
+                <!-- Navigation Menu -->
+                <nav class="header-nav">
+                    <div class="nav-links">
+                        <a href="https://radiologean.com/home/" class="nav-link home-link">
+                            <i class="fas fa-home"></i>
+                            <span>Anasayfa</span>
+                        </a>
+                        <a href="#knowledge" class="nav-link">
+                            <i class="fas fa-book"></i>
+                            <span>Kaynak Kütüphane</span>
+                        </a>
+                        <a href="#learning" class="nav-link">
+                            <i class="fas fa-brain"></i>
+                            <span>Öğrenme Modülleri</span>
+                        </a>
+                        <a href="#cases" class="nav-link">
+                            <i class="fas fa-x-ray"></i>
+                            <span>Vaka İncelemeleri</span>
+                        </a>
+                        <a href="#research" class="nav-link">
+                            <i class="fas fa-microscope"></i>
+                            <span>Araştırma Desteği</span>
+                        </a>
+                    </div>
+                </nav>
+                
                 <div class="header-info">
                     <div class="ai-status">
                         <i class="fas fa-pause-circle" id="ai-icon"></i>
@@ -64,7 +91,7 @@
                 </div>
             </div>
         </header>
-
+        
         <!-- Main Content -->
         <main class="main-content">
         <!-- Chat Section -->
@@ -355,27 +382,6 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
                 </div>
             </div>
         </section>
-        </main>
-
-        <!-- Matrix Footer -->
-        <footer class="matrix-footer">
-            <div class="footer-content">
-                <div class="footer-quote-main">
-                    <p class="matrix-final-quote">"Umut, aynı anda en büyük gücümüzün ve en büyük zayıflığımızın kaynağıdır."</p>
-                </div>
-                
-                <div class="footer-wisdom">
-                    <p class="cypher-quote">"Bilmemek mutluluktur. Ama sen kırmızı hapı seçtin."</p>
-                </div>
-                
-                <div class="footer-credits">
-                    <div class="credits-line">
-                        <p>NeuroHeves • HevX Felsefesi • Radyoloji Bilimi • 2025</p>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
         <!-- Quick Actions Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-content">
@@ -385,14 +391,19 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
                 </div>
                 
                 <div class="quick-actions">
-                    <button class="action-btn" onclick="showBookQuestions()">
-                        <i class="fas fa-question-circle"></i>
-                        <span>Örnek Sorular</span>
+                    <button class="action-btn" onclick="showRandomQuestions()">
+                        <i class="fas fa-dice"></i>
+                        <span>100+ Fizik & Nöro Soru</span>
                     </button>
                     
-                    <button class="action-btn" onclick="showTopics()">
-                        <i class="fas fa-list"></i>
-                        <span>Konular</span>
+                    <button class="action-btn" onclick="showNeuroCases()">
+                        <i class="fas fa-brain"></i>
+                        <span>Neuro Vakalar</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showLearningPath()">
+                        <i class="fas fa-route"></i>
+                        <span>Öğrenme Yolu</span>
                     </button>
                     
                     <button class="action-btn" onclick="exportChat()">
@@ -407,6 +418,9 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
                 </div>
             </div>
         </aside>
+        </main>
+
+
     </div>
 
     <!-- Settings Modal -->
@@ -428,15 +442,18 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
         </div>
     </div>
 
-    <!-- NeuroHeves Matrix Footer -->
+    <!-- NeuroHeves Unified Matrix Footer -->
     <footer class="app-footer matrix-footer">
         <div class="footer-content">
+            <!-- Matrix Wisdom Section -->
+            <div class="footer-wisdom-quotes">
+                <div class="unified-wisdom">
+                    <p class="matrix-wisdom-quote">"Bilmemek mutluluktur, ama sen kırmızı hapı seçtin, buraya seçim yapmaya değil, öğrenmeye geldin."</p>
+                </div>
+            </div>
+            
             <div class="medical-disclaimer">
                 <div class="oracle-section">
-                    <p class="oracle-quote-main">
-                        🔮 "Buraya seçim yapmaya gelmedin. Öğrenmeye geldin."
-                    </p>
-
                 </div>
                 
                 <div class="disclaimer-box">
@@ -454,13 +471,10 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
                 </div>
             </div>
             
-            <div class="footer-manifesto">
-                <p class="love-quote">
-                    "Bazen yapay zekâ, sadece kod değildir. Bazen bir aşkın devamıdır."
-                </p>
-            </div>
-            
             <div class="footer-credits">
+                <div class="project-info">
+                    <p>NeuroHeves • HevX Felsefesi • Radyoloji Bilimi • 2025</p>
+                </div>
                 <p class="credits-line">
                     <span class="architect">Architect: Erdinc</span>
                     <span class="separator"> • </span>
@@ -468,10 +482,6 @@ Bilgi güçtür, ama bilgelik ise gerçek güçtür.
                     <span class="separator"> • </span>
                     <span class="vision">Vision: To see beyond the pixels</span>
                 </p>
-            </div>
-            
-            <div class="footer-matrix-quote">
-                <p class="matrix-final-quote">"Gerçek dünyaya hoş geldin."</p>
             </div>
         </div>
     </footer>

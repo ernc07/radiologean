@@ -1,8 +1,8 @@
 # HevX - Matrix Neuroradiology Assistant
-## RadiologeaN Integration Package
+## Radiologean Integration Package
 
 ### 📋 Overview
-HevX, RadiologeaN sitesine entegre edilecek Matrix temalı AI neuroradyoloji asistanıdır. `/HevX` sayfasında çalışacak şekilde tasarlanmıştır.
+HevX, Radiologean sitesine entegre edilecek Matrix temalı AI neuroradyoloji asistanıdır. `/HevX` sayfasında çalışacak şekilde tasarlanmıştır.
 
 ### 🎯 Features
 - ✅ Matrix Rain arka plan efekti
@@ -22,7 +22,7 @@ HevX-page/
 └── README.md              # This file
 ```
 
-### 🚀 RadiologeaN Integration
+### 🚀 Radiologean Integration
 
 #### Option 1: Next.js Route (Recommended)
 1. **Create HevX route in Next.js app:**
@@ -96,7 +96,7 @@ npm run dev
 - Lazy loading support
 
 ### 🎯 Integration Checklist
-- [ ] Copy HevX files to RadiologeaN project
+- [ ] Copy HevX files to Radiologean project
 - [ ] Set up API key environment variable
 - [ ] Add navigation link to main site
 - [ ] Test authentication flow
