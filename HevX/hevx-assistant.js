@@ -6,7 +6,11 @@ class NeuroHevesMatrix {
         this.chatHistory = [];
         this.isLoading = false;
         this.isAuthenticated = false;
-        this.matrixPassword = '2113'; // Heves'in doğum yılı (1997) + 116
+        this.currentUser = null;
+        this.matrixPassword = '2113'; // Heves'in doğum yılı (1997) + 116 (Architect bypass)
+        
+        // Üyelik sistemi
+        this.initializeUserSystem();
         
         // NeuroHeves Matrix düşünce mesajları
         this.matrixThinkingMessages = [
@@ -145,6 +149,93 @@ class NeuroHevesMatrix {
         }
     }
 
+    // === ÜYELİK SİSTEMİ METODLARI ===
+    
+    initializeUserSystem() {
+        // LocalStorage'da kullanıcı verileri yoksa oluştur
+        if (!localStorage.getItem('hevx_users')) {
+            const defaultUsers = [
+                {
+                    id: 'arch-001',
+                    username: 'architect',
+                    email: 'admin@radiologean.com',
+                    password: this.hashPassword('Radiolog2024!'),
+                    role: 'Architect',
+                    emailVerified: true,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    isBlocked: false
+                }
+            ];
+            localStorage.setItem('hevx_users', JSON.stringify(defaultUsers));
+        }
+        
+        // Session kontrolü
+        this.checkExistingSession();
+    }
+    
+    // Basit hash fonksiyonu
+    hashPassword(password) {
+        let hash = 0;
+        for (let i = 0; i < password.length; i++) {
+            const char = password.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return hash.toString(36);
+    }
+    
+    // Şifre validasyonu
+    validatePassword(password) {
+        if (password.length < 8) {
+            return { valid: false, message: 'Şifre en az 8 karakter olmalıdır' };
+        }
+        if (!/[A-Z]/.test(password)) {
+            return { valid: false, message: 'En az bir büyük harf içermelidir' };
+        }
+        if (!/[a-z]/.test(password)) {
+            return { valid: false, message: 'En az bir küçük harf içermelidir' };
+        }
+        if (!/[0-9]/.test(password)) {
+            return { valid: false, message: 'En az bir rakam içermelidir' };
+        }
+        if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+            return { valid: false, message: 'En az bir özel karakter içermelidir (!@#$%^&*)' };
+        }
+        return { valid: true, message: '' };
+    }
+    
+    // E-posta validasyonu
+    validateEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    // Mevcut session kontrolü
+    checkExistingSession() {
+        const session = localStorage.getItem('hevx_session');
+        if (session) {
+            const sessionData = JSON.parse(session);
+            const loginTime = new Date(sessionData.loginTime);
+            const now = new Date();
+            const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 3600);
+            
+            // "Beni Hatırla" aktifse 168 saat (7 gün), değilse 24 saat
+            const maxHours = sessionData.rememberMe ? 168 : 24;
+            
+            if (hoursDiff < maxHours) {
+                // Session geçerli
+                this.currentUser = sessionData;
+                this.isAuthenticated = true;
+                return true;
+            } else {
+                // Session süresi dolmuş
+                localStorage.removeItem('hevx_session');
+            }
+        }
+        return false;
+    }
+
     async init() {
         try {
             // AI Status'u başlangıçta Standby yap
@@ -173,11 +264,21 @@ class NeuroHevesMatrix {
     }
 
     showPasswordOverlay() {
+        // Session kontrolü yap
+        if (this.checkExistingSession()) {
+            // Kullanıcı zaten giriş yapmış
+            this.showAccessGranted();
+            return;
+        }
+        
         // Body'ye password-screen class'ı ekle - lockdown mode
         document.body.classList.add('password-screen');
         
         // Architect signature'ı ekle
         this.addArchitectSignature();
+        
+        // Üyelik sistemi overlay'ini göster
+        this.showAuthOverlay();
         
         // Password screen header'ı silindi - sadece container header kullan
         
@@ -255,6 +356,637 @@ class NeuroHevesMatrix {
         signature.className = 'architect-signature-fullscreen';
         signature.innerHTML = 'Architect : ERNC';
         document.body.appendChild(signature);
+    }
+    
+    showAuthOverlay() {
+        const overlay = document.createElement('div');
+        overlay.id = 'hevx-auth-overlay';
+        overlay.className = 'hevx-auth-overlay';
+        overlay.innerHTML = `
+            <div class="auth-container" style="
+                max-width: 520px;
+                width: 90%;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                border-radius: 20px;
+                padding: 40px;
+                box-shadow: 0 0 60px rgba(20, 184, 166, 0.4);
+                position: relative;
+                animation: slideIn 0.5s ease-out;
+            ">
+                <!-- Logo ve Başlık -->
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h1 style="
+                        font-size: 42px;
+                        font-weight: bold;
+                        background: linear-gradient(to right, #14b8a6, #06b6d4);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        margin-bottom: 10px;
+                    ">HevX Access</h1>
+                    <p style="color: #94a3b8; font-size: 14px;">NeuroHeves AI Radiology Assistant</p>
+                </div>
+
+                <!-- Tab Switcher -->
+                <div style="display: flex; gap: 8px; margin-bottom: 30px; background: #0f172a; padding: 5px; border-radius: 12px;">
+                    <button onclick="window.neuroHevesMatrix.switchAuthTab('architect')" id="architect-tab" style="
+                        flex: 1;
+                        padding: 10px;
+                        border: none;
+                        border-radius: 8px;
+                        background: #14b8a6;
+                        color: white;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        font-size: 13px;
+                    ">Architect</button>
+                    <button onclick="window.neuroHevesMatrix.switchAuthTab('login')" id="login-tab" style="
+                        flex: 1;
+                        padding: 10px;
+                        border: none;
+                        border-radius: 8px;
+                        background: transparent;
+                        color: #94a3b8;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        font-size: 13px;
+                    ">Giriş</button>
+                    <button onclick="window.neuroHevesMatrix.switchAuthTab('register')" id="register-tab" style="
+                        flex: 1;
+                        padding: 10px;
+                        border: none;
+                        border-radius: 8px;
+                        background: transparent;
+                        color: #94a3b8;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        font-size: 13px;
+                    ">Kayıt</button>
+                </div>
+
+                <!-- Error/Success Messages -->
+                <div id="auth-message" style="
+                    display: none;
+                    padding: 12px;
+                    border-radius: 8px;
+                    margin-bottom: 20px;
+                    font-size: 14px;
+                "></div>
+
+                <!-- Architect Bypass Form (Matrix Puzzle) -->
+                <div id="architect-form" style="display: block;">
+                    <div style="background: #0f172a; padding: 25px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #1e293b;">
+                        <h3 style="color: #14b8a6; font-size: 18px; margin-bottom: 15px; text-align: center;">
+                            🏛️ ARCHITECT BYPASS
+                        </h3>
+                        
+                        <div style="background: rgba(20, 184, 166, 0.1); padding: 20px; border-radius: 8px; border: 1px solid #14b8a6; margin-bottom: 20px;">
+                            <div style="text-align: center; color: #14b8a6; font-family: monospace; font-size: 16px; margin-bottom: 15px;">
+                                ∫₀<sup>(Day×Month)+Month+Neo</sup> (2x/N + Year/N) dx = <strong>S</strong>
+                            </div>
+                            <div style="color: #cbd5e1; font-size: 13px; text-align: center; line-height: 1.6;">
+                                <p style="margin: 8px 0;"><strong>The day the Muse came into being</strong></p>
+                                <p style="margin: 8px 0; color: #94a3b8; font-style: italic;">
+                                    "Kalbinin bildiği sayı, aklının aradığı cevaptır"
+                                </p>
+                                <p style="margin: 8px 0; color: #64748b; font-size: 12px;">
+                                    Neo = The One | Year = Muse birth year
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                                🔑 Quantum Access Code
+                            </label>
+                            <input 
+                                type="text" 
+                                id="architect-code" 
+                                maxlength="4"
+                                style="
+                                    width: 100%;
+                                    padding: 14px 16px;
+                                    background: #000;
+                                    border: 2px solid #14b8a6;
+                                    border-radius: 8px;
+                                    color: #14b8a6;
+                                    font-size: 24px;
+                                    text-align: center;
+                                    font-family: monospace;
+                                    letter-spacing: 8px;
+                                    transition: all 0.3s;
+                                "
+                                placeholder="?????"
+                                onfocus="this.style.boxShadow='0 0 20px rgba(20, 184, 166, 0.4)'"
+                                onblur="this.style.boxShadow='none'"
+                            />
+                        </div>
+                        
+                        <button onclick="window.neuroHevesMatrix.handleArchitectBypass()" style="
+                            width: 100%;
+                            padding: 14px;
+                            border: none;
+                            border-radius: 10px;
+                            background: #14b8a6;
+                            color: white;
+                            font-size: 16px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.background='#0d9488'" onmouseout="this.style.background='#14b8a6'">
+                            ENTER MATRIX
+                        </button>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 15px; background: rgba(100, 116, 139, 0.1); border-radius: 8px;">
+                        <p style="color: #64748b; font-size: 12px; margin: 0;">
+                            💡 Architect'in doğrudan erişimi | Puzzle çöz ve sisteme gir
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <div id="login-form" style="display: block;">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            E-posta veya Kullanıcı Adı
+                        </label>
+                        <input 
+                            type="text" 
+                            id="login-username" 
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                                transition: all 0.3s;
+                            "
+                            placeholder="admin@radiologean.com"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            Şifre
+                        </label>
+                        <input 
+                            type="password" 
+                            id="login-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                                transition: all 0.3s;
+                            "
+                            placeholder="••••••••"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                        <input 
+                            type="checkbox" 
+                            id="remember-me"
+                            style="width: 18px; height: 18px; cursor: pointer;"
+                        />
+                        <label for="remember-me" style="color: #cbd5e1; font-size: 14px; cursor: pointer;">
+                            Beni Hatırla (7 gün)
+                        </label>
+                    </div>
+                    
+                    <button onclick="window.neuroHevesMatrix.handleLogin()" style="
+                        width: 100%;
+                        padding: 14px;
+                        border: none;
+                        border-radius: 10px;
+                        background: #14b8a6;
+                        color: white;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        margin-bottom: 15px;
+                    " onmouseover="this.style.background='#0d9488'" onmouseout="this.style.background='#14b8a6'">
+                        Giriş Yap
+                    </button>
+                    
+                    <div style="text-align: center; margin-top: 20px; padding: 15px; background: #0f172a; border-radius: 8px;">
+                        <p style="color: #64748b; font-size: 13px; margin-bottom: 8px;">Demo Hesap:</p>
+                        <p style="color: #14b8a6; font-size: 13px; font-family: monospace;">
+                            admin@radiologean.com / Radiolog2024!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Register Form -->
+                <div id="register-form" style="display: none;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            Kullanıcı Adı
+                        </label>
+                        <input 
+                            type="text" 
+                            id="reg-username"
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                            "
+                            placeholder="kullaniciadi"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            E-posta
+                        </label>
+                        <input 
+                            type="email" 
+                            id="reg-email"
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                            "
+                            placeholder="ornek@email.com"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            Şifre
+                        </label>
+                        <input 
+                            type="password" 
+                            id="reg-password"
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                            "
+                            placeholder="••••••••"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                        <p style="color: #64748b; font-size: 11px; margin-top: 6px;">
+                            Min 8 karakter, büyük/küçük harf, rakam ve özel karakter
+                        </p>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; color: #cbd5e1; margin-bottom: 8px; font-size: 14px; font-weight: 500;">
+                            Şifre Tekrar
+                        </label>
+                        <input 
+                            type="password" 
+                            id="reg-password-confirm"
+                            style="
+                                width: 100%;
+                                padding: 12px 16px;
+                                background: #0f172a;
+                                border: 2px solid #1e293b;
+                                border-radius: 8px;
+                                color: white;
+                                font-size: 14px;
+                            "
+                            placeholder="••••••••"
+                            onfocus="this.style.borderColor='#14b8a6'"
+                            onblur="this.style.borderColor='#1e293b'"
+                        />
+                    </div>
+                    
+                    <button onclick="window.neuroHevesMatrix.handleRegister()" style="
+                        width: 100%;
+                        padding: 14px;
+                        border: none;
+                        border-radius: 10px;
+                        background: #14b8a6;
+                        color: white;
+                        font-size: 16px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                    " onmouseover="this.style.background='#0d9488'" onmouseout="this.style.background='#14b8a6'">
+                        Kayıt Ol
+                    </button>
+                    
+                    <div style="text-align: center; margin-top: 15px;">
+                        <p style="color: #64748b; font-size: 12px;">
+                            Kayıt sonrası Architect onayı gereklidir
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Enter key ile giriş
+        setTimeout(() => {
+            // Architect code için Enter
+            const architectCode = document.getElementById('architect-code');
+            if (architectCode) {
+                architectCode.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleArchitectBypass();
+                    }
+                });
+                architectCode.focus(); // İlk açılışta focus
+            }
+            
+            // Login password için Enter
+            const loginPassword = document.getElementById('login-password');
+            if (loginPassword) {
+                loginPassword.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleLogin();
+                    }
+                });
+            }
+        }, 100);
+    }
+    
+    switchAuthTab(tab) {
+        const architectTab = document.getElementById('architect-tab');
+        const loginTab = document.getElementById('login-tab');
+        const registerTab = document.getElementById('register-tab');
+        const architectForm = document.getElementById('architect-form');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const messageDiv = document.getElementById('auth-message');
+        
+        // Tüm tabları reset
+        architectTab.style.background = 'transparent';
+        architectTab.style.color = '#94a3b8';
+        loginTab.style.background = 'transparent';
+        loginTab.style.color = '#94a3b8';
+        registerTab.style.background = 'transparent';
+        registerTab.style.color = '#94a3b8';
+        
+        // Tüm formları gizle
+        architectForm.style.display = 'none';
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'none';
+        
+        // Seçili tab ve formu göster
+        if (tab === 'architect') {
+            architectTab.style.background = '#14b8a6';
+            architectTab.style.color = 'white';
+            architectForm.style.display = 'block';
+        } else if (tab === 'login') {
+            loginTab.style.background = '#14b8a6';
+            loginTab.style.color = 'white';
+            loginForm.style.display = 'block';
+        } else {
+            registerTab.style.background = '#14b8a6';
+            registerTab.style.color = 'white';
+            registerForm.style.display = 'block';
+        }
+        
+        messageDiv.style.display = 'none';
+    }
+    
+    showAuthMessage(message, type = 'error') {
+        const messageDiv = document.getElementById('auth-message');
+        if (!messageDiv) return;
+        
+        messageDiv.textContent = message;
+        messageDiv.style.display = 'block';
+        
+        if (type === 'error') {
+            messageDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+            messageDiv.style.border = '2px solid #ef4444';
+            messageDiv.style.color = '#fca5a5';
+        } else {
+            messageDiv.style.background = 'rgba(34, 197, 94, 0.2)';
+            messageDiv.style.border = '2px solid #22c55e';
+            messageDiv.style.color = '#86efac';
+        }
+    }
+    
+    handleArchitectBypass() {
+        const code = document.getElementById('architect-code')?.value.trim();
+        
+        if (!code) {
+            this.showAuthMessage('Quantum Access Code gerekli');
+            return;
+        }
+        
+        if (code !== this.matrixPassword) {
+            this.showAuthMessage('❌ Access Denied. Yanlış kod.');
+            return;
+        }
+        
+        // Architect bypass başarılı - Architect olarak giriş yap
+        const usersData = localStorage.getItem('hevx_users');
+        if (usersData) {
+            const users = JSON.parse(usersData);
+            const architect = users.find(u => u.role === 'Architect');
+            
+            if (architect) {
+                // Session oluştur
+                const session = {
+                    userId: architect.id,
+                    username: architect.username,
+                    email: architect.email,
+                    role: 'Architect',
+                    loginTime: new Date().toISOString(),
+                    rememberMe: true,
+                    bypassMode: true // Architect bypass ile girdi
+                };
+                localStorage.setItem('hevx_session', JSON.stringify(session));
+                
+                // Son giriş güncelle
+                architect.lastLogin = new Date().toISOString();
+                const updatedUsers = users.map(u => u.id === architect.id ? architect : u);
+                localStorage.setItem('hevx_users', JSON.stringify(updatedUsers));
+                
+                this.currentUser = session;
+                this.isAuthenticated = true;
+                
+                this.showAuthMessage('✅ Matrix Architect Mode Activated!', 'success');
+                
+                setTimeout(() => {
+                    this.showAccessGranted();
+                }, 1500);
+                return;
+            }
+        }
+        
+        // Kullanıcı bulunamadıysa da izin ver (legacy mode)
+        this.isAuthenticated = true;
+        this.currentUser = {
+            username: 'Architect',
+            role: 'Architect',
+            bypassMode: true
+        };
+        
+        this.showAuthMessage('✅ Architect Bypass Successful!', 'success');
+        
+        setTimeout(() => {
+            this.showAccessGranted();
+        }, 1500);
+    }
+    
+    handleLogin() {
+        const username = document.getElementById('login-username')?.value.trim();
+        const password = document.getElementById('login-password')?.value;
+        const rememberMe = document.getElementById('remember-me')?.checked;
+        
+        if (!username || !password) {
+            this.showAuthMessage('Lütfen tüm alanları doldurun');
+            return;
+        }
+        
+        // Kullanıcıları al
+        const usersData = localStorage.getItem('hevx_users');
+        if (!usersData) {
+            this.showAuthMessage('Sistem hatası. Sayfayı yenileyin.');
+            return;
+        }
+        
+        const users = JSON.parse(usersData);
+        const hashedPassword = this.hashPassword(password);
+        
+        // Kullanıcıyı bul
+        const user = users.find(u => 
+            (u.email === username || u.username === username) && 
+            u.password === hashedPassword
+        );
+        
+        if (!user) {
+            this.showAuthMessage('Kullanıcı adı/e-posta veya şifre hatalı');
+            return;
+        }
+        
+        if (user.isBlocked) {
+            this.showAuthMessage('Hesabınız engellenmiş. Lütfen Architect ile iletişime geçin.');
+            return;
+        }
+        
+        if (!user.emailVerified) {
+            this.showAuthMessage('E-posta adresiniz henüz onaylanmamış. Architect onayını bekleyin.');
+            return;
+        }
+        
+        // Son giriş zamanını güncelle
+        user.lastLogin = new Date().toISOString();
+        const updatedUsers = users.map(u => u.id === user.id ? user : u);
+        localStorage.setItem('hevx_users', JSON.stringify(updatedUsers));
+        
+        // Session oluştur
+        const session = {
+            userId: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            loginTime: new Date().toISOString(),
+            rememberMe: rememberMe || false
+        };
+        localStorage.setItem('hevx_session', JSON.stringify(session));
+        
+        this.currentUser = session;
+        this.isAuthenticated = true;
+        
+        this.showAuthMessage('Giriş başarılı! HevX yükleniyor...', 'success');
+        
+        setTimeout(() => {
+            this.showAccessGranted();
+        }, 1500);
+    }
+    
+    handleRegister() {
+        const username = document.getElementById('reg-username')?.value.trim();
+        const email = document.getElementById('reg-email')?.value.trim();
+        const password = document.getElementById('reg-password')?.value;
+        const passwordConfirm = document.getElementById('reg-password-confirm')?.value;
+        
+        if (!username || !email || !password || !passwordConfirm) {
+            this.showAuthMessage('Lütfen tüm alanları doldurun');
+            return;
+        }
+        
+        if (!this.validateEmail(email)) {
+            this.showAuthMessage('Geçerli bir e-posta adresi girin');
+            return;
+        }
+        
+        const passwordCheck = this.validatePassword(password);
+        if (!passwordCheck.valid) {
+            this.showAuthMessage(passwordCheck.message);
+            return;
+        }
+        
+        if (password !== passwordConfirm) {
+            this.showAuthMessage('Şifreler eşleşmiyor');
+            return;
+        }
+        
+        // Kullanıcıları al
+        const usersData = localStorage.getItem('hevx_users');
+        const users = usersData ? JSON.parse(usersData) : [];
+        
+        // Kullanıcı zaten var mı?
+        if (users.some(u => u.email === email)) {
+            this.showAuthMessage('Bu e-posta adresi zaten kayıtlı');
+            return;
+        }
+        
+        if (users.some(u => u.username === username)) {
+            this.showAuthMessage('Bu kullanıcı adı zaten kullanılıyor');
+            return;
+        }
+        
+        // Yeni kullanıcı oluştur
+        const newUser = {
+            id: `user-${Date.now()}`,
+            username: username,
+            email: email,
+            password: this.hashPassword(password),
+            role: 'Member',
+            emailVerified: false, // Architect onayı gerekli
+            createdAt: new Date().toISOString(),
+            lastLogin: null,
+            isBlocked: false
+        };
+        
+        users.push(newUser);
+        localStorage.setItem('hevx_users', JSON.stringify(users));
+        
+        this.showAuthMessage('Kayıt başarılı! Architect onayını bekleyin. Şimdi giriş yapabilirsiniz.', 'success');
+        
+        setTimeout(() => {
+            this.switchAuthTab('login');
+            document.getElementById('login-username').value = username;
+        }, 2000);
     }
 
     setupMatrixMasking() {
