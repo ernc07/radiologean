@@ -565,7 +565,7 @@ export default function Home() {
             </Link>
 
             {/* HevX AI Assistant Card - Matrix Themed */}
-            <a href="http://localhost:8088" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden">
+            <a href="/HevX/" target="_blank" rel="noopener noreferrer" className="group relative overflow-hidden">
               <div className="h-full bg-black rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 border-2 border-green-500/40 hover:border-green-400 relative overflow-hidden hover:scale-105 backdrop-blur-sm min-h-[280px] flex flex-col hover:shadow-green-500/50" style={{ animation: 'hevx-glow 4s ease-in-out infinite' }}>
                 {/* Matrix Rain Effect Background */}
                 <div className="absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-500">
