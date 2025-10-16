@@ -44,6 +44,87 @@ class NeuroHevesMatrixRain {
         this.rainSpeed = this.getAuthBasedSpeed();
         this.glowIntensity = this.getAuthBasedGlow();
     }
+    
+    // Quantum Verified ekranı için yumuşak konkav hız animasyonu
+    animateConcaveSpeed() {
+        console.log('🎬 Matrix Rain: Yumuşak konkav hız animasyonu başlıyor (4 saniye)');
+        
+        const startSpeed = 0.4; // 0. saniye: 0.4
+        const peakSpeed = 0.8; // 3. saniye: 0.8 (peak)
+        const endSpeed = 0.4; // 4. saniye: 0.4 (geri düşüş)
+        
+        let elapsed = 0;
+        const totalDuration = 4000; // 4 saniye
+        const peakTime = 3000; // 3. saniyede peak (0.8)
+        
+        const interval = setInterval(() => {
+            elapsed += 100;
+            
+            if (elapsed <= peakTime) {
+                // 0-3 saniye: Yüksel (0.4 → 0.8)
+                const progress = elapsed / peakTime;
+                this.rainSpeed = startSpeed + (peakSpeed - startSpeed) * progress;
+            } else {
+                // 3-4 saniye: Düş (0.8 → 0.4)
+                const progress = (elapsed - peakTime) / (totalDuration - peakTime);
+                this.rainSpeed = peakSpeed - (peakSpeed - endSpeed) * progress;
+            }
+            
+            console.log(`📊 Matrix Rain Speed: ${this.rainSpeed.toFixed(2)} (${elapsed}ms)`);
+            
+            if (elapsed >= totalDuration) {
+                clearInterval(interval);
+                this.rainSpeed = endSpeed; // Son değer: 0.4
+                console.log('✅ Matrix Rain: Yumuşak konkav tamamlandı! Speed: 0.4');
+            }
+        }, 100);
+    }
+    
+    // ACCESS GRANTED ekranı için DUR-PATLAMA animasyonu (5 saniye)
+    animateQuadraticSpeed() {
+        console.log('🎬 Matrix Rain: DUR-PATLAMA animasyonu başlıyor! (0.4→0→DUR→1.2 🚀 - 5 saniye)');
+        
+        let elapsed = 0;
+        const totalDuration = 5000; // 5 saniye toplam
+        
+        // Zaman dilimleri (5/3 oranında genişletildi):
+        const slowDownDuration = 1667;  // 1.67 saniye: 0.4 → 0
+        const pauseDuration = 833;      // 0.83 saniye: TAM DUR (speed = 0)
+        const explosionDuration = 2500; // 2.5 saniye: 0 → 1.2 (PATLAMA!)
+        
+        const interval = setInterval(() => {
+            elapsed += 100;
+            
+            if (elapsed <= slowDownDuration) {
+                // AŞAMA 1: Yavaşla ve DUR (0.4 → 0, 1.67 saniye)
+                const progress = elapsed / slowDownDuration; // 0 → 1
+                this.rainSpeed = 0.4 * (1 - progress); // 0.4 → 0
+                console.log(`⬇️ YAVAŞLIYOR: ${this.rainSpeed.toFixed(2)} (${elapsed}ms)`);
+                
+            } else if (elapsed <= slowDownDuration + pauseDuration) {
+                // AŞAMA 2: TAM DUR (speed = 0, 0.83 saniye)
+                this.rainSpeed = 0;
+                console.log(`⏸️ TAM DURDU: 0.00 (${elapsed}ms)`);
+                
+            } else {
+                // AŞAMA 3: PATLAMA! (0 → 1.2, 2.5 saniye, yüksek ivme)
+                const explosionElapsed = elapsed - slowDownDuration - pauseDuration;
+                const progress = explosionElapsed / explosionDuration; // 0 → 1
+                
+                // Yüksek ivme için x³ (cubic) kullan - daha dramatik!
+                const cubicProgress = Math.pow(progress, 3);
+                
+                this.rainSpeed = 1.2 * cubicProgress; // 0 → 1.2
+                console.log(`� PATLAMA!!! ${this.rainSpeed.toFixed(2)} (${elapsed}ms, ivme: ${(cubicProgress * 100).toFixed(0)}%)`);
+            }
+            
+            if (elapsed >= totalDuration) {
+                clearInterval(interval);
+                this.rainSpeed = 1.2; // Kesin son değer
+                console.log('✅ DUR-PATLAMA tamamlandı! Speed: 1.2 (ana ekran) 💥🚀');
+            }
+        }, 100);
+    }
 
     init() {
         this.createCanvas();

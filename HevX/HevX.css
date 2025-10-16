@@ -124,9 +124,9 @@ body:not(.password-screen) .header-content {
     transform: translate(-50%, -50%) !important;
     z-index: 10 !important; /* Overlay'in üstünde */
     display: block !important;
-    max-width: 600px !important;
-    width: 90% !important;
-    max-height: 70vh !important;
+    max-width: 900px !important;
+    width: 95% !important;
+    max-height: 80vh !important;
     overflow-y: auto !important;
     pointer-events: all !important; /* Tüm challenge tıklanabilir */
     
@@ -3546,8 +3546,8 @@ canvas,
     background: rgba(0, 255, 65, 0.05);
     border: 1px solid rgba(0, 255, 65, 0.3);
     border-radius: 8px;
-    padding: 10px 12px;
-    margin: 0 0 8px 0;
+    padding: 20px 30px;
+    margin: 0 0 15px 0;
     text-align: center;
 }
 
@@ -3573,8 +3573,8 @@ canvas,
 .oracle-box {
     background: rgba(0, 255, 65, 0.08);
     border-left: 4px solid var(--matrix-green);
-    padding: 8px 10px;
-    margin: 5px 0 8px 0;
+    padding: 20px 25px;
+    margin: 15px 0;
     border-radius: 5px;
 }
 
@@ -4373,65 +4373,103 @@ body.hevx-unlocked #matrixCanvas {
     transform: translateY(-1px);
 }
 
-/* === AUTH OVERLAY STYLES === */
-.hevx-auth-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(10px);
-    z-index: 99999;
+/* === LOGOUT BUTTON === */
+.logout-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out;
+    gap: 8px;
+    padding: 10px 20px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #ef4444;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 15px;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.auth-container input:focus {
-    outline: none;
-    border-color: #14b8a6 !important;
-    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
-}
-
-.auth-container button:hover {
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-.auth-container button:active {
+.logout-btn i {
+    font-size: 16px;
+}
+
+.logout-btn:active {
     transform: translateY(0);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .auth-container {
-        padding: 30px 25px !important;
-        margin: 20px;
+/* === MEMBER LOGIN INPUT LARGE === */
+#member-email,
+#member-password {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 18px 25px !important;
+    font-size: 16px !important;
+    min-height: 60px !important;
+    line-height: 1.5 !important;
+    letter-spacing: 0.5px !important;
+    box-sizing: border-box !important;
+}
+
+#member-email::placeholder,
+#member-password::placeholder {
+    font-size: 14px !important;
+    opacity: 0.6;
+}
+
+/* === USER WELCOME ALERT === */
+.user-welcome-alert {
+    font-weight: 600;
+}
+
+.user-welcome-alert .alert-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-welcome-alert .alert-icon {
+    font-size: 32px;
+    color: #000;
+}
+
+.user-welcome-alert .alert-text h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.user-welcome-alert .alert-text p {
+    margin: 0;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
     }
-    
-    .auth-container h1 {
-        font-size: 32px !important;
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
     }
 }

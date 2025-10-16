@@ -152,15 +152,31 @@ class NeuroHevesMatrix {
     // === ÜYELİK SİSTEMİ METODLARI ===
     
     initializeUserSystem() {
-        // LocalStorage'da kullanıcı verileri yoksa oluştur
-        if (!localStorage.getItem('hevx_users')) {
+        // Version kontrolü - eğer eski sistem varsa temizle ve yeniden oluştur
+        const currentVersion = '2.0'; // Kullanıcı sistemi versiyonu
+        const storedVersion = localStorage.getItem('hevx_users_version');
+        
+        // Version farklıysa veya yoksa kullanıcıları yeniden oluştur
+        if (storedVersion !== currentVersion) {
+            console.log('🔄 Kullanıcı sistemi güncelleniyor... Version:', currentVersion);
             const defaultUsers = [
                 {
                     id: 'arch-001',
                     username: 'architect',
                     email: 'admin@radiologean.com',
-                    password: this.hashPassword('Radiolog2024!'),
+                    password: this.hashPassword('Arch!tect$2024#Matrix@HevX'),
                     role: 'Architect',
+                    emailVerified: true,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    isBlocked: false
+                },
+                {
+                    id: 'heves-001',
+                    username: 'heves',
+                    email: 'hevesykarakas@gmail.com',
+                    password: this.hashPassword('318709'),
+                    role: 'Heves',
                     emailVerified: true,
                     createdAt: new Date().toISOString(),
                     lastLogin: null,
@@ -168,10 +184,54 @@ class NeuroHevesMatrix {
                 }
             ];
             localStorage.setItem('hevx_users', JSON.stringify(defaultUsers));
+            localStorage.setItem('hevx_users_version', currentVersion);
+            console.log('✅ Kullanıcı sistemi güncellendi! Yeni kullanıcılar:', defaultUsers.map(u => u.username));
         }
         
         // Session kontrolü
         this.checkExistingSession();
+    }
+    
+    // Kullanıcı alert göster (hoşgeldin mesajı)
+    showUserAlert(username, role) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'user-welcome-alert';
+        alertDiv.innerHTML = `
+            <div class="alert-content">
+                <div class="alert-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="alert-text">
+                    <h3>Welcome, ${username}!</h3>
+                    <p>Role: ${role}</p>
+                </div>
+            </div>
+        `;
+        
+        alertDiv.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 65, 0.95), rgba(0, 200, 50, 0.95));
+            color: #000;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 255, 65, 0.4);
+            z-index: 10000;
+            animation: slideInRight 0.5s ease-out;
+            font-family: 'Courier New', monospace;
+            min-width: 250px;
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        // 3 saniye sonra kaldır
+        setTimeout(() => {
+            alertDiv.style.animation = 'slideOutRight 0.5s ease-in';
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 500);
+        }, 3000);
     }
     
     // Basit hash fonksiyonu
@@ -227,6 +287,12 @@ class NeuroHevesMatrix {
                 // Session geçerli
                 this.currentUser = sessionData;
                 this.isAuthenticated = true;
+                
+                // Logout butonunu göster
+                setTimeout(() => {
+                    this.showLogoutButton();
+                }, 500);
+                
                 return true;
             } else {
                 // Session süresi dolmuş
@@ -276,11 +342,6 @@ class NeuroHevesMatrix {
         
         // Architect signature'ı ekle
         this.addArchitectSignature();
-        
-        // Üyelik sistemi overlay'ini göster
-        this.showAuthOverlay();
-        
-        // Password screen header'ı silindi - sadece container header kullan
         
         // Quantum challenge'ı body'ye ekle (header'dan sonra)
         const overlay = document.createElement('div');
@@ -356,6 +417,263 @@ class NeuroHevesMatrix {
         signature.className = 'architect-signature-fullscreen';
         signature.innerHTML = 'Architect : ERNC';
         document.body.appendChild(signature);
+    }
+
+    showMemberLoginScreen() {
+        console.log('🎬 AŞAMA 2: Member Login ekranı açılıyor...');
+        
+        // Matrix Canvas'ı 0.8'de tut (Quantum Verified'dan devam) - CSS override'ı engelle
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        if (matrixCanvas) {
+            matrixCanvas.style.setProperty('opacity', '0.8', 'important'); // !important ile CSS override'ı engelle
+            console.log('✅ Matrix Canvas opacity: 0.8 !important (Member Login\'de korunuyor)');
+        }
+        
+        // Quantum challenge'ı kaldır
+        const quantumOverlay = document.getElementById('hevx-password-overlay');
+        if (quantumOverlay) {
+            quantumOverlay.remove();
+        }
+
+        // Member Login için: password-screen VE hevx-locked tut!
+        document.body.classList.add('password-screen');
+        document.body.classList.add('hevx-locked'); // ⭐ Tut (chat section opacity için gerekli!)
+        document.body.classList.remove('hevx-unlocked');
+
+        // Member Login Screen - Overlay 0.4 (Quantum Verified'dan devam)
+        const memberOverlay = document.createElement('div');
+        memberOverlay.id = 'hevx-member-login-overlay';
+        memberOverlay.className = 'hevx-password-overlay'; // Aynı quantum stili
+        memberOverlay.style.background = 'rgba(0, 0, 0, 0.40)'; // ✨ 0.40'tan başla
+        console.log('✅ Member Login Overlay opacity: 0.40 (Quantum Verified\'dan devam ediyor)');
+        memberOverlay.innerHTML = `
+            <div class="hevx-password-container">
+            <div class="quantum-challenge-screen">
+                <div class="problem-box">
+                    <h2>🔐 HEVX MEMBER ACCESS</h2>
+                    <div class="oracle-box" style="margin-top: 20px;">
+                        <h3>AUTHENTICATION REQUIRED</h3>
+                        <p class="oracle-text">
+                            "Welcome, Heves. The Architect awaits your presence.
+                            
+                            The quantum puzzle has been solved.
+                            Now, the HevX system requires your authentication.
+                            
+                            Your identity is the key to unlocking the neural network.
+                            Enter your credentials and step into the realm of knowledge..."
+                        </p>
+                        <p class="oracle-signature">- Oracle</p>
+                    </div>
+                </div>
+
+                <div class="password-input-quantum" style="margin-top: 30px;">
+                    <label for="member-email" style="color: var(--matrix-green); margin-bottom: 10px; display: block; font-size: 15px; font-weight: 600;">
+                        📧 E-MAIL / USERNAME:
+                    </label>
+                    <input 
+                        type="text" 
+                        id="member-email" 
+                        class="matrix-input member-input-large"
+                        placeholder="admin@radiologean.com"
+                        autocomplete="off"
+                        style="margin-bottom: 20px !important; width: 100% !important; padding: 18px 25px !important; font-size: 18px !important; min-height: 60px !important; line-height: 1.5 !important;"
+                    />
+                    
+                    <label for="member-password" style="color: var(--matrix-green); margin-bottom: 10px; display: block; font-size: 15px; font-weight: 600;">
+                        🔑 PASSWORD:
+                    </label>
+                    <input 
+                        type="password" 
+                        id="member-password" 
+                        class="matrix-input member-input-large"
+                        placeholder="••••••••"
+                        autocomplete="off"
+                        style="width: 100% !important; padding: 18px 25px !important; font-size: 18px !important; min-height: 60px !important; line-height: 1.5 !important;"
+                    />
+                    
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button onclick="window.neuroHevesMatrix.handleMemberLogin()" class="matrix-unlock-btn" style="flex: 1;">
+                            ENTER THE HEVX
+                        </button>
+                    </div>
+                </div>
+
+                <div id="member-login-error" class="error-message"></div>
+                
+                <div style="margin-top: 25px; padding: 20px; background: rgba(0, 255, 65, 0.05); border: 1px solid rgba(0, 255, 65, 0.2); border-radius: 8px;">
+                    <h4 style="color: var(--matrix-green); font-size: 14px; margin: 0 0 10px 0; text-align: center;">
+                        📝 HOW TO REGISTER?
+                    </h4>
+                    <p style="color: rgba(0, 255, 65, 0.7); font-size: 13px; margin: 0; text-align: center; line-height: 1.6;">
+                        New users must be registered by the <strong>Architect</strong>.<br>
+                        Contact: <a href="mailto:admin@radiologean.com" style="color: var(--matrix-green); text-decoration: underline;">admin@radiologean.com</a>
+                    </p>
+                </div>
+            </div>
+            </div>
+        `;
+
+        document.body.appendChild(memberOverlay);
+
+        // Enter key ile giriş
+        setTimeout(() => {
+            const emailInput = document.getElementById('member-email');
+            const passwordInput = document.getElementById('member-password');
+            
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.handleMemberLogin();
+                    }
+                });
+                emailInput.focus();
+            }
+        }, 100);
+    }
+
+    handleMemberLogin() {
+        const email = document.getElementById('member-email')?.value.trim();
+        const password = document.getElementById('member-password')?.value;
+        const errorDiv = document.getElementById('member-login-error');
+        
+        if (!email || !password) {
+            errorDiv.textContent = 'ACCESS DENIED: All fields required';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Kullanıcıları al
+        const usersData = localStorage.getItem('hevx_users');
+        if (!usersData) {
+            errorDiv.textContent = 'SYSTEM ERROR: Database not found';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        const users = JSON.parse(usersData);
+        const hashedPassword = this.hashPassword(password);
+        
+        // Kullanıcıyı bul
+        const user = users.find(u => 
+            (u.email === email || u.username === email) && 
+            u.password === hashedPassword
+        );
+        
+        if (!user) {
+            errorDiv.textContent = 'ACCESS DENIED: Invalid credentials';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        if (user.isBlocked) {
+            errorDiv.textContent = 'ACCESS DENIED: Account blocked';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        if (!user.emailVerified) {
+            errorDiv.textContent = 'ACCESS DENIED: Email not verified. Awaiting Architect approval.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Başarılı giriş!
+        user.lastLogin = new Date().toISOString();
+        const updatedUsers = users.map(u => u.id === user.id ? user : u);
+        localStorage.setItem('hevx_users', JSON.stringify(updatedUsers));
+        
+        // Session oluştur
+        const session = {
+            userId: user.id,
+            username: user.username,
+            email: user.email,
+            role: user.role,
+            loginTime: new Date().toISOString(),
+            rememberMe: false
+        };
+        localStorage.setItem('hevx_session', JSON.stringify(session));
+        
+        this.currentUser = session;
+        
+        // TAM UNLOCK - Password screen mode'dan çık (HEMEN!)
+        document.body.classList.remove('password-screen');
+        document.body.classList.remove('hevx-locked');
+        document.body.classList.add('hevx-unlocked');
+        
+        // ⚡ Matrix Rain'in DUR-PATLAMA animasyonunu HEMEN başlat! (0.4→0→DUR→1.2, 5 saniye)
+        if (window.neuroHevesMatrixRain) {
+            window.neuroHevesMatrixRain.animateQuadraticSpeed();
+            console.log('🚀 Matrix Rain DUR-PATLAMA animasyonu başlatıldı! (yavaşla→dur→PATLAMA!)');
+        }
+        
+        // Matrix Canvas unlock animasyonu başlat
+        this.startMatrixUnlockAnimation();
+        
+        // Scrolling Text'e Access Granted mesajı gönder
+        if (window.matrixScrollingText) {
+            window.matrixScrollingText.showAccessGrantedMessage();
+        }
+        
+        // ACCESS GRANTED ekranını göster
+        this.showAccessGranted();
+        
+        // HevX'e giriş yap (5 saniye sonra - ACCESS GRANTED animasyonunu göster)
+        setTimeout(async () => {
+            // Overlay'i kaldır
+            const overlay = document.getElementById('hevx-member-login-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
+            
+            // Matrix unlock animasyonu tamamlandı
+            this.completeMatrixUnlockAnimation();
+            
+            // Architect signature'ı kaldır
+            const signature = document.querySelector('.architect-signature-fullscreen');
+            if (signature) {
+                signature.remove();
+            }
+            
+            await this.initializeAI();
+            this.setupEventListeners();
+            this.displayWelcomeMessage();
+            this.loadChatHistory();
+            this.setAIStatus('ready');
+            
+            // Logout butonunu göster
+            this.showLogoutButton();
+            
+            // 🎉 Kullanıcı hoşgeldin alert'i göster
+            setTimeout(() => {
+                this.showUserAlert(this.currentUser.username, this.currentUser.role);
+            }, 500); // Ana ekran yüklendikten 0.5 saniye sonra
+        }, 5000); // ACCESS GRANTED animasyonu bittikten sonra (5 saniye)
+    }
+
+    handleLogout() {
+        // Session ve user data'yı temizle
+        localStorage.removeItem('hevx_session');
+        this.currentUser = null;
+        this.isAuthenticated = false;
+        
+        // Logout butonunu gizle
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.style.display = 'none';
+        }
+        
+        // Sayfayı yenile - quantum puzzle'a dön
+        location.reload();
+    }
+
+    showLogoutButton() {
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn && this.currentUser) {
+            logoutBtn.style.display = 'flex';
+            
+            // Kullanıcı adını tooltip olarak ekle
+            logoutBtn.title = `Logged in as: ${this.currentUser.username || this.currentUser.email}`;
+        }
     }
     
     showAuthOverlay() {
@@ -1230,57 +1548,34 @@ class NeuroHevesMatrix {
         console.log('🎯 Beklenen şifre:', this.matrixPassword);
 
         if (enteredPassword === this.matrixPassword) {
-            console.log('✅ Şifre doğru! Authentication başlıyor...');
+            console.log('✅ Şifre doğru! Matrix Canvas canlandırılıyor...');
             this.isAuthenticated = true;
             
             // Input'u devre dışı bırak (duplicate event'leri engelle)
             passwordInput.disabled = true;
             
-            // ŞİFRE DOĞRU - HEMEN GÖLGELEMEYI KALDIR!
-            document.body.classList.remove('password-screen'); // Gölgeleme kalkar
-            document.body.classList.remove('hevx-locked');
-            document.body.classList.add('hevx-unlocked');
+            // AŞAMA 1: ÖNCELİK! Matrix Canvas'ı HEMEN canlandır (opacity 0.4 → 0.8, 1.5 saniye)
+            const matrixCanvas = document.getElementById('matrixCanvas');
+            if (matrixCanvas) {
+                console.log('🎬 AŞAMA 1 (ÖNCELİK): Matrix Canvas canlandırılıyor (0.4 → 0.8, 1.5 saniye)');
+                matrixCanvas.style.transition = 'opacity 1.5s ease-in-out';
+                matrixCanvas.style.opacity = '0.8'; // 0.4'ten 0.8'e çık (QUANTUM VERIFIED anında!)
+                console.log('✅ Matrix Canvas opacity: 0.4 → 0.8 (QUANTUM VERIFIED ile birlikte!)');
+            }
             
-            // Matrix Canvas unlock animasyonu başlat
-            this.startMatrixUnlockAnimation();
-            
-            // Matrix Rain'i güncelle
+            // ⚡ Matrix Rain'in konkav hız animasyonunu başlat (4 saniye)
             if (window.neuroHevesMatrixRain) {
-                window.neuroHevesMatrixRain.updateAuthenticationState();
+                window.neuroHevesMatrixRain.animateConcaveSpeed();
             }
             
-            // Scrolling Text'e Access Granted mesajı gönder
-            if (window.matrixScrollingText) {
-                window.matrixScrollingText.showAccessGrantedMessage();
-            }
+            // AŞAMA 2: QUANTUM VERIFIED mesajını göster (Matrix Canvas zaten canlanıyor)
+            this.showQuantumVerified();
             
-            this.showAccessGranted();
-            setTimeout(async () => {
-                // Password screen mode'dan çık
-                document.body.classList.remove('password-screen');
-                
-                // Overlay'i kaldır
-                const overlay = document.getElementById('hevx-password-overlay');
-                if (overlay) {
-                    overlay.remove();
-                }
-                
-                // Matrix unlock animasyonu tamamlandı
-                this.completeMatrixUnlockAnimation();
-                
-                // Architect signature'ı kaldır
-                const signature = document.querySelector('.architect-signature-fullscreen');
-                if (signature) {
-                    signature.remove();
-                }
-                
-                await this.initializeAI();
-                this.setupEventListeners();
-                this.displayWelcomeMessage();
-                this.loadChatHistory();
-                // Şifre sonrası AI status kesinlikle ready olsun
-                this.setAIStatus('ready');
-            }, 5000);
+            // AŞAMA 3: 4 saniye sonra Member Login Screen'e geç (Konkav animasyon tamamlandıktan sonra)
+            setTimeout(() => {
+                console.log('🎬 AŞAMA 3: Member Login ekranına geçiliyor (Overlay 0.40, Canvas 0.8 korunuyor)...');
+                this.showMemberLoginScreen();
+            }, 4000); // Konkav animasyon (3.5s) + 0.5s bekleme = 4s
         } else {
             this.showAccessDenied();
         }
@@ -1292,8 +1587,18 @@ class NeuroHevesMatrix {
             Math.floor(Math.random() * this.accessGrantedMessages.length)
         ];
         
-        // Overlay içindeki prompt'u access granted ile değiştir
-        const overlay = document.getElementById('hevx-password-overlay');
+        // Kullanıcıya özel hoşgeldin mesajı
+        const username = this.currentUser?.username || 'User';
+        let welcomeMessage = `Welcome to HevX System, ${username}...`;
+        
+        // Heves için özel mesaj 💕
+        if (username.toLowerCase() === 'heves' || this.currentUser?.email === 'hevesykarakas@gmail.com') {
+            welcomeMessage = 'Selam Heves canım aşkım 💕';
+        }
+        
+        // Overlay'i bul (quantum veya member login overlay olabilir)
+        const overlay = document.getElementById('hevx-password-overlay') || 
+                        document.getElementById('hevx-member-login-overlay');
         if (overlay) {
             overlay.innerHTML = `
                 <div class="matrix-access-granted">
@@ -1303,7 +1608,7 @@ class NeuroHevesMatrix {
                     <h2 class="access-title">✅ QUANTUM ACCESS GRANTED</h2>
                     
                     <div class="access-welcome">
-                        <p class="welcome-main">Welcome to HevX System, Heves...</p>
+                        <p class="welcome-main">${welcomeMessage}</p>
                         <p class="welcome-quote">"${randomMessage}"</p>
                     </div>
                     
@@ -1314,48 +1619,51 @@ class NeuroHevesMatrix {
                 </div>
             `;
 
-            // 5 saniye boyunca karartmayı %70'den %0'a düşür - JavaScript ile
+            // 5 saniye boyunca overlay ve Matrix Canvas'ı fade-out yap
             this.animateOverlayFadeOut(overlay);
-
-            // 3 saniye Access Granted mesajını göster, sonra overlay'i kaldır ve AI'yi başlat
-            setTimeout(async () => {
-                overlay.remove();
-                // AI başlatma süreci
-                this.setAIStatus('loading');
-                
-                await this.initializeAI();
-                this.setupEventListeners();
-                this.displayWelcomeMessage();
-                this.loadChatHistory();
-                // Access sonrası AI status kesinlikle ready olsun
-                this.setAIStatus('ready');
-            }, 3000);
+            
+            // Matrix Rain DUR-PATLAMA animasyonu zaten handleMemberLogin'de başlatıldı!
+            // Overlay remove ve AI başlatma da handleMemberLogin'de yapılıyor (5 saniye sonra)
+            // Bu fonksiyon sadece UI'yi güncelliyor ve animasyonları başlatıyor
         }
     }
 
     animateOverlayFadeOut(overlay) {
-        console.log('🎬 Opacity Fade-out animasyonu başlatıldı!');
+        console.log('🎬 AŞAMA 4 (FINAL): Overlay 0.40→0, Canvas 0.8→1 (5 saniye)');
         console.log('Overlay element:', overlay);
         
-        let opacity = 0.7; // Başlangıç %70
-        const step = 0.7 / 30; // 30 adımda %70'i sıfıra düşür (3 saniye için)
-        const interval = 3000 / 30; // 3 saniyede 30 adım = 100ms aralık
+        let overlayOpacity = 0.40; // Başlangıç %40 (Member Login'den gelen)
+        const overlayStep = 0.40 / 50; // 50 adımda %40'ı sıfıra düşür (5 saniye için)
+        const interval = 5000 / 50; // 5 saniyede 50 adım = 100ms aralık
         
-        console.log(`Başlangıç değerleri: opacity=${opacity}, step=${step}, interval=${interval}ms`);
+        console.log(`Başlangıç değerleri: overlayOpacity=${overlayOpacity}, overlayStep=${overlayStep}, interval=${interval}ms`);
+        
+        // Matrix Canvas son haline geçecek (TAM PARLAK - opacity 1.0!)
+        const matrixCanvas = document.getElementById('matrixCanvas');
+        let matrixOpacity = 0.8; // Başlangıç (Member Login'den gelen)
+        const matrixIncrease = 0.2 / 50; // 0.8'den 1.0'a çık (5 saniyede +0.2)
         
         const fadeInterval = setInterval(() => {
-            opacity -= step;
+            overlayOpacity -= overlayStep;
+            matrixOpacity += matrixIncrease;
             
-            if (opacity <= 0) {
-                opacity = 0;
+            if (overlayOpacity <= 0) {
+                overlayOpacity = 0;
+                matrixOpacity = 1.0; // TAM PARLAK!
                 clearInterval(fadeInterval);
-                console.log('✅ Opacity Fade-out animasyonu tamamlandı!');
+                console.log('✅ Final Fade-out tamamlandı! Overlay 0, Matrix Canvas 1.0 (TAM PARLAK)');
             }
             
-            // Sadece background opacity'sini değiştir - blur'ü dokunma
-            overlay.style.setProperty('background', `rgba(0, 0, 0, ${opacity})`, 'important');
+            // Overlay'in KENDİSİNİN opacity'sini azalt (hem background hem de tüm element!)
+            overlay.style.setProperty('opacity', overlayOpacity.toFixed(3), 'important');
+            overlay.style.setProperty('background', `rgba(0, 0, 0, ${overlayOpacity})`, 'important');
             
-            console.log(`📊 Fade: opacity=${opacity.toFixed(3)}`);
+            // Matrix Canvas opacity'sini artır (5 saniyede 1.0'a - TAM PARLAK!)
+            if (matrixCanvas) {
+                matrixCanvas.style.setProperty('opacity', matrixOpacity.toFixed(3), 'important');
+            }
+            
+            console.log(`📊 Final Fade: overlay=${overlayOpacity.toFixed(3)}, matrix=${matrixOpacity.toFixed(3)}`);
         }, interval);
     }
 
@@ -1389,6 +1697,61 @@ class NeuroHevesMatrix {
         }, 500);
     }
 
+    showQuantumVerified() {
+        console.log('🎬 QUANTUM VERIFIED mesajı gösteriliyor...');
+        
+        const passwordInput = document.getElementById('matrixPassword');
+        const errorDiv = document.getElementById('password-error');
+        
+        // ✨ KONKAV ANİMASYON: Overlay 0.95 → 0 (dip) → 0.40 (bounce back) - 3.5 saniye
+        const overlay = document.getElementById('hevx-password-overlay');
+        if (overlay) {
+            console.log('🎬 KONKAV Animasyon Başlıyor: 0.95 → 0 → 0.40 (3.5s toplam)');
+            
+            // AŞAMA 1: 0.95 → 0 (2.5 saniye - uzun düşüş, Matrix Rain tam açık!)
+            overlay.style.transition = 'background 2.5s ease-out';
+            overlay.style.background = 'rgba(0, 0, 0, 0)'; // Tamamen şeffaf
+            console.log('🔻 Overlay 0\'a düşüyor... (2.5s - yavaş düşüş)');
+            
+            // AŞAMA 2: 0 → 0.40 (2.5 saniye sonra - 1 saniyede bounce back)
+            setTimeout(() => {
+                overlay.style.transition = 'background 1s ease-in';
+                overlay.style.background = 'rgba(0, 0, 0, 0.40)'; // Hafif koyulaş
+                console.log('🔺 Overlay 0.40\'a yükseliyor... (1s bounce back)');
+            }, 2500); // 2.5 saniye sonra başla
+            
+            console.log('✅ Konkav animasyon: 0.95 → 0 (2.5s) → 0.40 (1s) = 3.5s toplam');
+        }
+        
+        // Input'u yeşil yap (başarı)
+        passwordInput.style.borderColor = 'var(--matrix-green)';
+        passwordInput.style.boxShadow = '0 0 20px rgba(0, 255, 65, 0.8)';
+        passwordInput.style.background = 'rgba(0, 255, 65, 0.1)';
+        
+        // Başarı mesajı göster
+        if (errorDiv) {
+            errorDiv.innerHTML = `
+                <div style="
+                    color: var(--matrix-green); 
+                    text-align: center; 
+                    font-size: 18px; 
+                    font-weight: 600; 
+                    animation: pulse 0.5s ease-in-out;
+                    text-shadow: 0 0 10px rgba(0, 255, 65, 0.8);
+                ">
+                    ✓ QUANTUM VERIFIED
+                    <div style="font-size: 13px; margin-top: 8px; opacity: 0.8; font-weight: 400;">
+                        Architect's knowledge confirmed. Proceeding to authentication...
+                    </div>
+                </div>
+            `;
+            errorDiv.style.display = 'block';
+            errorDiv.style.background = 'rgba(0, 255, 65, 0.1)';
+            errorDiv.style.border = '2px solid var(--matrix-green)';
+            
+            console.log('✅ QUANTUM VERIFIED mesajı gösterildi');
+        }
+    }
 
 
     showAccessDenied() {
