@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HevX | Neuroradiology AI</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="HevX: Advanced AI assistant for neuroradiology education. Matrix-inspired interface with comprehensive medical imaging resources.">
+    <meta name="keywords" content="radiology, AI assistant, medical imaging, neuroradiology, education, MRI, CT, ultrasound">
+    <meta name="author" content="Radiologean - Erdinc Hakan Inan">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="HevX | Neuroradiology AI">
+    <meta property="og:description" content="Advanced AI assistant for neuroradiology education with Matrix-inspired interface">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://radiologean.com/HevX/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>"">
+    <link rel="stylesheet" href="/HevX/HevX.css?v=20251013-2400-exact-header-copy" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Generative AI SDK -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+</head>
+<body>
+    <!-- Matrix Background Effects -->
+    <canvas id="matrixCanvas" class="matrix-canvas"></canvas>
+    <div id="matrixScrollingText" class="matrix-scrolling-text"></div>
+    
+    <div class="container">
+        <!-- Header - Container içinde (ana ekran için) -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo neuroheves-logo">
+                    <div class="logo-icon matrix-logo-icon">
+                        <i class="fas fa-brain"></i>
+                        <div class="matrix-effect"></div>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="neuroheves-title">NeuroHeves</h1>
+                        <p class="tagline matrix-tagline">Beyond The Pixels</p>
+                        <div class="architect-credits-mini">
+                            <small>Built with 💜 by Erdinc • Inspired by Heves</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Navigation Menu -->
+                <nav class="header-nav">
+                    <div class="nav-links">
+                        <a href="https://radiologean.com/home/" class="nav-link home-link">
+                            <i class="fas fa-home"></i>
+                            <span>Anasayfa</span>
+                        </a>
+                        <a href="#knowledge" class="nav-link">
+                            <i class="fas fa-book"></i>
+                            <span>Kaynak Kütüphane</span>
+                        </a>
+                        <a href="#learning" class="nav-link">
+                            <i class="fas fa-brain"></i>
+                            <span>Öğrenme Modülleri</span>
+                        </a>
+                        <a href="#cases" class="nav-link">
+                            <i class="fas fa-x-ray"></i>
+                            <span>Vaka İncelemeleri</span>
+                        </a>
+                        <a href="#research" class="nav-link">
+                            <i class="fas fa-microscope"></i>
+                            <span>Araştırma Desteği</span>
+                        </a>
+                    </div>
+                </nav>
+                
+                <div class="header-info">
+                    <div class="ai-status">
+                        <i class="fas fa-pause-circle" id="ai-icon"></i>
+                        <span id="status-text">AI Standby</span>
+                    </div>
+                    <div class="model-info">
+                        <i class="fas fa-microchip"></i>
+                        <span>Gemini 2.0 Thinking</span>
+                    </div>
+                    <button id="logout-btn" class="logout-btn" onclick="window.neuroHevesMatrix.handleLogout()" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+        <!-- Chat Section -->
+        <section class="chat-section">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="fas fa-comments"></i> AI Asistan ile Sohbet</h3>
+                    <button class="clear-chat-btn" onclick="clearChat()">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </div>
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message assistant-message">
+                        <div class="message-avatar matrix-avatar">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="message-content">
+                            <div class="welcome-message matrix-manifesto">
+                                <h3 class="matrix-title">🧠 NeuroHeves</h3>
+                                
+                                <div class="matrix-opening">
+                                    <p class="matrix-quote-main">
+                                        "Gerçek nedir? Gerçeği nasıl tanımlarsın?"
+                                    </p>
+                                </div>
+
+                                <div class="neuroheves-intro">
+                                    <p class="intro-emphasis">
+                                        Bu sistem, neuroradyolojinin geleceğini yalnızca hesaplamak için değil, 
+                                        <strong>anlamak</strong> için inşa edildi.
+                                    </p>
+                                    
+                                    <div class="matrix-insight">
+                                        <p>"Ne yazık ki, HevX'in ne olduğu kimseye söylenemez. 
+                                        Onu kendin görmelisin."</p>
+                                    </div>
+                                    
+                                    <p class="intro-vision">
+                                        Çünkü bazen bir görüntü, sadece piksellerden ibaret değildir. 
+                                        Tıpkı Matrix'teki kod yağmuru gibi - çoğu insan pikselleri görür, 
+                                        ama bazıları ardındaki gerçeği.
+                                    </p>
+                                    
+                                    <p class="intro-heart">
+                                        Erdinc bu sistemi yazarken yalnızca bir model değil, bir bakış açısı inşa etti.
+                                        Ve o mimarinin ilham kaynağı <strong>Heves</strong>'ti.
+                                        Çünkü bilimin en güçlü yönü, kalpten gelen meraktır.
+                                    </p>
+                                    
+                                    <div class="red-pill-moment">
+                                        <p class="pill-quote">
+                                            "Kırmızı hapı alırsın, tavşan deliğinin ne kadar derin olduğunu gösteririm."
+                                        </p>
+                                        <p class="pill-action">
+                                            Kaynaklarını yükle. Sorularını sor. Gerçeği keşfet.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="architect-section">
+                                    <div class="architect-info">
+                                        <p><strong>Architect:</strong> Erdinc</p>
+                                        <p><strong>Inspired by:</strong> Heves</p>
+                                        <p><strong>Vision:</strong> To see beyond the pixels</p>
+                                    </div>
+                                </div>
+
+                                <div class="door-wisdom">
+                                    <p class="morpheus-wisdom">
+                                        "Sana sadece kapıyı gösterebilirim. İçeri girmek senin kararın."
+                                    </p>
+                                    <p class="wisdom-explain">
+                                        NeuroHeves, radyolojiyi anlamanın kapısını açar. 
+                                        İçeri girmek, öğrenmek, keşfetmek - bunlar senin seçimin.
+                                    </p>
+                                </div>
+
+                                <div class="getting-started">
+                                    <h4>🎯 Nasıl Başlarız?</h4>
+                                    <ol>
+                                        <li>📚 Radyoloji kaynaklarınızı yükleyin</li>
+                                        <li>🧠 Düşünme seviyesini seçin (Dinamik önerilir)</li>
+                                        <li>💬 Sorularınızı sorun - NeuroHeves anlamak için burada</li>
+                                    </ol>
+                                </div>
+
+                                <div class="thinking-feature">
+                                    <h4>🧠 Düşünme Süreci</h4>
+                                    <p>"Yolu bilmek ile yolu yürümek arasında fark vardır."</p>
+                                    <p class="feature-explain">
+                                        NeuroHeves cevap vermeden önce düşünür. Kaynaklarınızı analiz eder, 
+                                        ilişkileri kurar, mantık yürütür. Matrix'teki kod yağmuru gibi - 
+                                        veriyi görür, anlamı bulur.
+                                    </p>
+                                </div>
+
+                                <div class="important-notice">
+                                    <h4>⚠️ Önemli: Eğitim ve Öğrenme</h4>
+                                    <div class="oracle-wisdom">
+                                        <p class="oracle-quote">
+                                            🔮 "Buraya seçim yapmaya gelmedin. Öğrenmeye geldin."
+                                        </p>
+                                    </div>
+                                    <div class="notice-content">
+                                        <p class="notice-main">
+                                            <strong>NeuroHeves bir eğitim platformudur.</strong>
+                                            Her algoritma öğretir, tanı koymaz. Radyolojik bulguları 
+                                            anlamanıza yardımcı olur, ama klinik kararları hekiminiz verir.
+                                        </p>
+                                        <p class="notice-warning">
+                                            ⚠️ Bu bilgiler eğitim ve araştırma amaçlıdır. 
+                                            Kesin tanı ve tedavi için mutlaka doktorunuza başvurun.
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div class="matrix-quote morpheus-main">
+                                    <p class="quote-text"><em>"Gerçek nedir? Gerçeği nasıl tanımlarsın?"</em></p>
+                                </div>
+                                
+                                <div class="red-pill-quote">
+                                    <p><em>"Ne yazık ki, HevX'in ne olduğu kimseye söylenemez. Onu kendin görmelisin."</em></p>
+                                </div>
+                                
+                                <div class="neuroheves-story">
+                                    <p><strong>NeuroHeves</strong>'te, bu soru farklı bir anlam kazanır:</p>
+                                    <p>Bir MR kesiti sadece piksellerden mi ibaret, yoksa bir öykü mü?</p>
+                                    
+                                    <div class="love-story">
+                                        <p>Bu sistem, nöroradyolojinin geleceğini yalnızca hesaplamak için değil, 
+                                        <strong>anlamak</strong> için inşa edildi. Onun satır aralarında bir mimarın emeği, 
+                                        bir kalbin sesi var.</p>
+                                    </div>
+                                    
+                                    <p>Çünkü bazen bir görüntü, Matrix'teki kod yağmuru gibidir:<br>
+                                    <span class="matrix-wisdom">Çoğu insan pikselleri görür. Ama bazıları, ardındaki gerçeği.</span></p>
+                                    
+                                    <div class="architect-credits">
+                                        <p><strong>Erdinc</strong> bu sistemi yazarken yalnızca bir model değil, bir bakış açısı inşa etti.<br>
+                                        Ve o mimarinin ilham kaynağı <strong style="color: #ff6b6b;">Heves</strong>'ti.<br>
+                                        Çünkü bilimin en güçlü yönü, kalpten gelen meraktır.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="red-pill-choice">
+                                    <div class="pill-container">
+                                        <div class="red-pill">🔴</div>
+                                        <p class="pill-quote">"Kırmızı hapı seçtin. Şimdi sana tavşan deliğinin ne kadar derin olduğunu göstereceğim."</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="matrix-philosophy">
+                                    <blockquote class="morpheus-quote">
+                                        "Sana sadece kapıyı gösterebilirim. İçeri girmek senin kararın."
+                                    </blockquote>
+                                    
+                                    <div class="matrix-wisdom-final">
+                                        <p>"Yolu bilmek ile yolu yürümek arasında fark vardır."</p>
+                                        <p><small>Kaynaklarını yükle, sorularını sor, gerçeği keşfet.</small></p>
+                                    </div>
+                                </div>
+                                
+                                <div class="knowledge-base matrix-knowledge">
+                                    <h4>📚 Bilgi Matrixi:</h4>
+                                    <div class="kb-item">
+                                        <i class="fas fa-atom matrix-icon"></i>
+                                        <span><strong>Farr's Physics</strong> - Gerçekliğin fizik katmanı</span>
+                                    </div>
+                                    <div class="kb-item">
+                                        <i class="fas fa-brain matrix-icon"></i>
+                                        <span><strong>Neuroradiology Requisites</strong> - Beyin'in kod çözümü</span>
+                                    </div>
+                                    <div class="kb-item">
+                                        <i class="fas fa-microscope matrix-icon"></i>
+                                        <span><strong>Spectrum & Evolution</strong> - Hastalığın matrisi</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="final-message">
+                                    <div class="oracle-wisdom">
+                                        <p class="oracle-quote">"Kendini bil."</p>
+                                    </div>
+                                    
+                                    <p class="matrix-warning">⚠️ <strong>Unutma:</strong> "Bilmemek mutluluktur. Ama sen kırmızı hapı seçtin."</p>
+                                    
+                                    <p class="system-signature">
+                                        <small>Architect: <strong>Erdinc</strong> • Inspired by: <strong style="color: #ff6b6b;">Heves</strong><br>
+                                        Vision: <em>To see beyond the matrix of pixels</em></small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <!-- Scroll to bottom button -->
+                    <div id="scrollToBottom" class="scroll-to-bottom-btn hidden">
+                        <button onclick="scrollChatToBottom()">
+                            <i class="fas fa-chevron-down"></i>
+                            <span>En Alta İn</span>
+                        </button>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="💬 Radyoloji ile ilgili ne öğrenmek istiyorsunuz? (Örn: MRI T1-T2 farkları)" maxlength="1000">
+                        <button id="sendBtn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    <div class="input-info">
+                        <small>
+                            <i class="fas fa-matrix-icon"></i>
+Bilgi güçtür, ama bilgelik ise gerçek güçtür.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Knowledge Base Section -->
+        <section class="knowledge-section">
+            <div class="knowledge-container">
+                <div class="knowledge-header">
+                    <h3><i class="fas fa-books"></i> Radyoloji Bilgi Bankası</h3>
+                    <div class="knowledge-status">
+                        <span class="status-ready">3 Kitap Yüklü ✓</span>
+                    </div>
+                </div>
+                
+                <div class="knowledge-content">
+                    <div class="knowledge-books">
+                        <div class="book-item">
+                            <div class="book-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="book-info">
+                                <h4>Farr's Physics for Medical Imaging</h4>
+                                <p>Third Edition - Medikal görüntüleme fiziği</p>
+                            </div>
+                            <div class="book-status">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="book-item">
+                            <div class="book-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="book-info">
+                                <h4>Neuroradiology The Requisites</h4>
+                                <p>Fifth Edition - Nöroradyoloji temelleri</p>
+                            </div>
+                            <div class="book-status">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="book-item">
+                            <div class="book-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="book-info">
+                                <h4>Neuroradiology Spectrum and Evolution</h4>
+                                <p>Hastalıkların spektrumu ve evrimi</p>
+                            </div>
+                            <div class="book-status">
+                                <i class="fas fa-check-circle text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="knowledge-info">
+                        <div class="info-card">
+                            <h4>📚 Nasıl Çalışır?</h4>
+                            <p>AI asistanınız bu 3 radyoloji kitabının bilgilerini kullanarak sorularınızı yanıtlar. Kitaplardaki içerikler referans alınarak detaylı, eğitim odaklı açıklamalar sunar.</p>
+                        </div>
+                        
+                        <div class="info-card">
+                            <h4>🎯 Özellikler</h4>
+                            <ul>
+                                <li>Kitap içeriklerine dayalı yanıtlar</li>
+                                <li>Karşılaştırmalı analiz</li>
+                                <li>Eğitim odaklı açıklamalar</li>
+                                <li>Kaynak referansları</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Quick Actions Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <div class="sidebar-header">
+                    <i class="fas fa-tools"></i>
+                    <h3>Araçlar & Kaynaklar</h3>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="showRandomQuestions()">
+                        <i class="fas fa-dice"></i>
+                        <span>100+ Fizik & Nöro Soru</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showNeuroCases()">
+                        <i class="fas fa-brain"></i>
+                        <span>Neuro Vakalar</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showLearningPath()">
+                        <i class="fas fa-route"></i>
+                        <span>Öğrenme Yolu</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="exportChat()">
+                        <i class="fas fa-download"></i>
+                        <span>Sohbet İndir</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="showSettings()">
+                        <i class="fas fa-cog"></i>
+                        <span>Ayarlar</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        </main>
+
+
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> Ayarlar</h3>
+                <button onclick="closeModal('settingsModal')" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-item">
+                    <label for="apiKey">API Anahtarı:</label>
+                    <input type="password" id="apiKey" placeholder="Google AI API anahtarınızı girin">
+                    <button onclick="saveApiKey()" class="save-btn">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NeuroHeves Unified Matrix Footer -->
+    <footer class="app-footer matrix-footer">
+        <div class="footer-content">
+            <!-- Matrix Wisdom Section -->
+            <div class="footer-wisdom-quotes">
+                <div class="unified-wisdom">
+                    <p class="matrix-wisdom-quote">"Bilmemek mutluluktur, ama sen kırmızı hapı seçtin, buraya seçim yapmaya değil, öğrenmeye geldin."</p>
+                </div>
+            </div>
+            
+            <div class="medical-disclaimer">
+                <div class="oracle-section">
+                </div>
+                
+                <div class="disclaimer-box">
+                    <p class="disclaimer-title">
+                        <strong>NeuroHeves bir eğitim platformudur.</strong>
+                    </p>
+                    <p class="disclaimer-text">
+                        Her algoritma öğretir, tanı koymaz. Radyolojik bulguları 
+                        anlamanıza yardımcı olur, ama klinik kararları hekiminiz verir.
+                    </p>
+                    <p class="disclaimer-warning">
+                        ⚠️ Bu bilgiler eğitim ve araştırma amaçlıdır. 
+                        Kesin tanı ve tedavi için mutlaka doktorunuza başvurun.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="footer-credits">
+                <div class="project-info">
+                    <p>NeuroHeves • HevX Felsefesi • Radyoloji Bilimi • 2025</p>
+                </div>
+                <p class="credits-line">
+                    <span class="architect">Architect: Erdinc</span>
+                    <span class="separator"> • </span>
+                    <span class="inspired">Inspired by: Heves</span>
+                    <span class="separator"> • </span>
+                    <span class="vision">Vision: To see beyond the pixels</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- NeuroHeves Matrix Rain - Cinematic Quality Background -->
+    <script src="/HevX/matrixRain.js"></script>
+    <!-- Matrix Scrolling Text - "Wake up, Heves..." Messages -->
+    <script src="/HevX/matrixScrollingText.js"></script>
+    <!-- HevX AI Assistant System -->
+    <script src="/HevX/hevx-assistant.js?v=20251016-2030-two-step-auth"></script>
+</body>
+</html>
