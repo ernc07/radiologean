@@ -868,52 +868,52 @@ const InvestmentDashboard = () => {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-bold text-lg mb-3 text-green-700">✅ Bugün Yapılanlar</h3>
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-2 text-sm text-gray-800">
                     <li className="flex items-start gap-2">
                       <span className="text-green-500">✓</span>
-                      <span><strong>TSMC</strong> $302.47'den alındı (1 adet)</span>
+                      <span><strong className="text-gray-900">TSMC</strong> $302.47'den alındı (1 adet)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500">✓</span>
-                      <span><strong>Qualcomm</strong> $165.11'den alındı (1 adet)</span>
+                      <span><strong className="text-gray-900">Qualcomm</strong> $165.11'den alındı (1 adet)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500">✓</span>
-                      <span><strong>Micron</strong> için $170 limit emir kuruldu (GTC)</span>
+                      <span><strong className="text-gray-900">Micron</strong> için $170 limit emir kuruldu (GTC)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500">✓</span>
-                      <span><strong>Apple</strong> için $230 limit emir kuruldu (GTC)</span>
+                      <span><strong className="text-gray-900">Apple</strong> için $230 limit emir kuruldu (GTC)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-green-500">✓</span>
-                      <span><strong>PayPal</strong> için $58 limit emir kuruldu (Day)</span>
+                      <span><strong className="text-gray-900">PayPal</strong> için $58 limit emir kuruldu (Day)</span>
                     </li>
                   </ul>
                 </div>
 
                 <div>
                   <h3 className="font-bold text-lg mb-3 text-blue-700">🎯 Haftaya Yapılacaklar</h3>
-                  <ul className="space-y-2 text-sm">
+                  <ul className="space-y-2 text-sm text-gray-800">
                     <li className="flex items-start gap-2">
                       <span className="text-blue-500">→</span>
-                      <span><strong>Stop-Loss kur:</strong> TSMC $270, Qualcomm $148</span>
+                      <span><strong className="text-gray-900">Stop-Loss kur:</strong> TSMC $270, Qualcomm $148</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-blue-500">→</span>
-                      <span><strong>PayPal emrini kontrol et</strong> (Day Order bugün iptal olur)</span>
+                      <span><strong className="text-gray-900">PayPal emrini kontrol et</strong> (Day Order bugün iptal olur)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-blue-500">→</span>
-                      <span><strong>Bekleyen emirleri kontrol et</strong> (hangisi doldu?)</span>
+                      <span><strong className="text-gray-900">Bekleyen emirleri kontrol et</strong> (hangisi doldu?)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-blue-500">→</span>
-                      <span><strong>Limit Sell emirleri kur</strong> (uzun vade hedefler için)</span>
+                      <span><strong className="text-gray-900">Limit Sell emirleri kur</strong> (uzun vade hedefler için)</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-blue-500">→</span>
-                      <span><strong>Portföy dengesi:</strong> Nakit ~$532, yeni fırsatları izle</span>
+                      <span><strong className="text-gray-900">Portföy dengesi:</strong> Nakit ~$532, yeni fırsatları izle</span>
                     </li>
                   </ul>
                 </div>
