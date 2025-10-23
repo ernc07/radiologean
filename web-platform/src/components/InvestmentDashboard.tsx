@@ -599,7 +599,7 @@ const InvestmentDashboard = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-4xl">🏆</span>
                       <div>
-                        <h3 className="text-xl font-bold">TSMC - ADR</h3>
+                        <h3 className="text-xl font-bold text-gray-900">TSMC - ADR</h3>
                         <p className="text-sm text-slate-600">Taiwan Semiconductor</p>
                       </div>
                     </div>
@@ -643,8 +643,8 @@ const InvestmentDashboard = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-3 p-3 bg-green-100 rounded text-sm">
-                    <strong>💡 Tavsiye:</strong> 1-2 yıl TUT! En iyi hisse (Rating 9.5/10), satmaya değmez. Stop-loss $270 koy.
+                  <div className="mt-3 p-3 bg-green-100 rounded text-sm text-gray-800">
+                    <strong className="text-gray-900">💡 Tavsiye:</strong> 1-2 yıl TUT! En iyi hisse (Rating 9.5/10), satmaya değmez. Stop-loss $270 koy.
                   </div>
                 </div>
 
@@ -654,7 +654,7 @@ const InvestmentDashboard = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-4xl">📱</span>
                       <div>
-                        <h3 className="text-xl font-bold">Qualcomm Inc.</h3>
+                        <h3 className="text-xl font-bold text-gray-900">Qualcomm Inc.</h3>
                         <p className="text-sm text-slate-600">Qualcomm</p>
                       </div>
                     </div>
@@ -741,7 +741,7 @@ const InvestmentDashboard = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">💳</span>
                       <div>
-                        <h3 className="text-lg font-bold">PayPal Holdings Inc.</h3>
+                        <h3 className="text-lg font-bold text-gray-900">PayPal Holdings Inc.</h3>
                         <p className="text-sm text-slate-600">Order ID: 5335454957</p>
                       </div>
                     </div>
@@ -779,7 +779,7 @@ const InvestmentDashboard = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">🛡️</span>
                       <div>
-                        <h3 className="text-lg font-bold">Apple Inc.</h3>
+                        <h3 className="text-lg font-bold text-gray-900">Apple Inc.</h3>
                         <p className="text-sm text-slate-600">Order ID: 5335454940</p>
                       </div>
                     </div>
@@ -817,7 +817,7 @@ const InvestmentDashboard = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">💎</span>
                       <div>
-                        <h3 className="text-lg font-bold">Micron Technology Inc.</h3>
+                        <h3 className="text-lg font-bold text-gray-900">Micron Technology Inc.</h3>
                         <p className="text-sm text-slate-600">Order ID: 5335454904</p>
                       </div>
                     </div>
@@ -851,8 +851,8 @@ const InvestmentDashboard = () => {
               </div>
 
               <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-300">
-                <div className="text-sm">
-                  <strong>⏰ Not:</strong> Bekleyen emirler GTC (Good Till Cancelled) tipinde. Fiyatlar hedefe ulaşana kadar bekleyecekler.
+                <div className="text-sm text-gray-800">
+                  <strong className="text-gray-900">⏰ Not:</strong> Bekleyen emirler GTC (Good Till Cancelled) tipinde. Fiyatlar hedefe ulaşana kadar bekleyecekler.
                   Day Order olanlar sadece bugün geçerli.
                 </div>
               </div>
@@ -920,7 +920,7 @@ const InvestmentDashboard = () => {
               </div>
 
               <div className="mt-6 p-4 bg-white rounded-lg">
-                <h3 className="font-bold mb-2">💰 Bütçe Durumu</h3>
+                <h3 className="font-bold mb-2 text-gray-900">💰 Bütçe Durumu</h3>
                 <div className="grid grid-cols-3 gap-4 text-center">
                   <div>
                     <div className="text-xs text-slate-500">Kullanılan</div>
@@ -940,8 +940,8 @@ const InvestmentDashboard = () => {
                 </div>
               </div>
 
-              <div className="mt-4 p-4 bg-green-100 rounded-lg">
-                <strong>🎉 Harika başlangıç!</strong> İlk adımları başarıyla attın. Şimdi sabırlı ol, emirlerin dolmasını bekle.
+              <div className="mt-4 p-4 bg-green-100 rounded-lg text-gray-800">
+                <strong className="text-gray-900">🎉 Harika başlangıç!</strong> İlk adımları başarıyla attın. Şimdi sabırlı ol, emirlerin dolmasını bekle.
                 Hafta içi piyasaları takip et ama günlük fiyat değişimlerine takılma. Uzun vade düşün! 💪
               </div>
             </div>
@@ -1405,7 +1405,7 @@ const InvestmentDashboard = () => {
         {activeTab === 'recommendations' && (
           <div className="space-y-6">
             <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-lg p-8 border-2 border-green-500">
-              <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
+              <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 text-gray-900">
                 <span className="text-4xl">🏆</span>
                 EN İYİ 3 SEÇİM + ALIM FİYATLARI
               </h2>
@@ -1431,8 +1431,8 @@ const InvestmentDashboard = () => {
                       <span className="font-bold text-purple-600">+12-18%</span>
                     </div>
                   </div>
-                  <div className="mt-3 p-2 bg-green-50 rounded text-xs">
-                    ✅ Şu anki fiyat ($295) zaten uygun!
+                  <div className="mt-3 p-2 bg-green-50 rounded text-xs text-gray-800">
+                    <strong className="text-gray-900">✅ Şu anki fiyat ($295) zaten uygun!</strong>
                   </div>
                 </div>
 
@@ -1457,8 +1457,8 @@ const InvestmentDashboard = () => {
                       <span className="font-bold text-purple-600">+8-20%</span>
                     </div>
                   </div>
-                  <div className="mt-3 p-2 bg-yellow-50 rounded text-xs">
-                    ⏸️ Şu an $202 - Düşüşü bekle!
+                  <div className="mt-3 p-2 bg-yellow-50 rounded text-xs text-gray-800">
+                    <strong className="text-gray-900">⏸️ Şu an $202 - Düşüşü bekle!</strong>
                   </div>
                 </div>
 
@@ -1483,8 +1483,8 @@ const InvestmentDashboard = () => {
                       <span className="font-bold text-purple-600">+10-15%</span>
                     </div>
                   </div>
-                  <div className="mt-3 p-2 bg-green-50 rounded text-xs">
-                    ✅ Şu an $163 - İyi fiyat!
+                  <div className="mt-3 p-2 bg-green-50 rounded text-xs text-gray-800">
+                    <strong className="text-gray-900">✅ Şu an $163 - İyi fiyat!</strong>
                   </div>
                 </div>
               </div>
